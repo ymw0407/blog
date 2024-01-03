@@ -1,6 +1,6 @@
 import { BlogName } from "@/components/atoms/blogName";
 import { ProfileImage } from "@/components/atoms/profileImage";
-import { CategoryList } from "@/components/atoms/categoryList";
+import { CategoryList } from "@/components/molecules/categoryList";
 
 export const AppBar = ({
   blogName,

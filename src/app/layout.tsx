@@ -28,6 +28,7 @@ export default function RootLayout({
           }
           categories={["Home", "About", "Blog", "Portfolio"]}
         ></AppBar>
+        {children}
       </body>
     </html>
   );
