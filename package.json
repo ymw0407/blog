@@ -9,6 +9,7 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "js-toml": "^1.0.0",
     "next": "14.0.4",
     "react": "^18",
     "react-dom": "^18"

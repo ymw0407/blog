@@ -21,7 +21,7 @@ export const CategoryList = ({
               category.toLowerCase() === currentCategory
                 ? "font-semibold"
                 : "font-light"
-            }`}
+            } hover:font-semibold`}
           >
             {category}
           </p>

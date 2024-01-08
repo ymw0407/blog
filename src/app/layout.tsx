@@ -19,7 +19,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="ko">
+    <html lang="ko" className="overflow-hidden w-[100%] h-[100%] select-none">
       <body className={(inter.className, notoSansKr.className)}>
         <AppBar
           blogName={"MINWOO"}

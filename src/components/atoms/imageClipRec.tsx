@@ -40,8 +40,10 @@ export const ImageClipRec = ({
         src={imageURL}
         alt={alt}
         priority
-        layout="fill"
-        className="bg-clip-border"
+        quality={100}
+        fill
+        // className="bg-clip-border"
+        sizes="43vw"
         style={imageStyle}
       />
     </div>

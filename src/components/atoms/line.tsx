@@ -1,15 +1,13 @@
 export const Line = ({
-  subTitle,
-  textColor = "text-darkblue_4",
+  w = "w-48",
+  h = "h-2",
+  bgColor = "bg-darkblue_4",
+  className = "",
 }: {
-  subTitle: string;
-  textColor?: string;
+  w?: string;
+  h?: string;
+  bgColor?: string;
+  className?: string;
 }) => {
-  return (
-    <p
-      className={`inline-block ${textColor} text-3xl font-normal text-opacity-70`}
-    >
-      {subTitle}
-    </p>
-  );
+  return <div className={`${w} ${h} ${bgColor} ${className}`} />;
 };
