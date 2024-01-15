@@ -46,6 +46,7 @@ const RAW_RUNTIME_STATE =
           ["postcss", "npm:8.4.32"],\
           ["react", "npm:18.2.0"],\
           ["react-dom", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:18.2.0"],\
+          ["react-feather", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:2.0.10"],\
           ["tailwindcss", "npm:3.4.0"],\
           ["ts-jest", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:29.1.1"],\
           ["typescript", "patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"]\
@@ -2887,6 +2888,7 @@ const RAW_RUNTIME_STATE =
           ["postcss", "npm:8.4.32"],\
           ["react", "npm:18.2.0"],\
           ["react-dom", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:18.2.0"],\
+          ["react-feather", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:2.0.10"],\
           ["tailwindcss", "npm:3.4.0"],\
           ["ts-jest", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:29.1.1"],\
           ["typescript", "patch:typescript@npm%3A5.3.3#optional!builtin<compat/typescript>::version=5.3.3&hash=e012d7"]\
@@ -7493,6 +7495,29 @@ const RAW_RUNTIME_STATE =
           ["react-error-boundary", "virtual:6965e8daec7b3c251e7237a44b5d4e72bb3d45529f30732df9ec74a931059607fcfc67702eb187547c61b0879ae9aecff6a5ad9e1b213cb0556203cbf449debd#npm:3.1.4"],\
           ["@babel/runtime", "npm:7.23.7"],\
           ["@types/react", "npm:18.2.45"],\
+          ["react", "npm:18.2.0"]\
+        ],\
+        "packagePeers": [\
+          "@types/react",\
+          "react"\
+        ],\
+        "linkType": "HARD"\
+      }]\
+    ]],\
+    ["react-feather", [\
+      ["npm:2.0.10", {\
+        "packageLocation": "../.yarn/berry/cache/react-feather-npm-2.0.10-b035d9c822-10c0.zip/node_modules/react-feather/",\
+        "packageDependencies": [\
+          ["react-feather", "npm:2.0.10"]\
+        ],\
+        "linkType": "SOFT"\
+      }],\
+      ["virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:2.0.10", {\
+        "packageLocation": "./.yarn/__virtual__/react-feather-virtual-a6d52d5148/2/.yarn/berry/cache/react-feather-npm-2.0.10-b035d9c822-10c0.zip/node_modules/react-feather/",\
+        "packageDependencies": [\
+          ["react-feather", "virtual:c6dcce817fa225290e033ab3df9d032741dc228bb28c9cbb4719875ef6095c1c8f4a1ecb6d1cce6f1119ad7c9bb93c31bc307a4e235fab5627d039ca42e55b65#npm:2.0.10"],\
+          ["@types/react", "npm:18.2.45"],\
+          ["prop-types", "npm:15.8.1"],\
           ["react", "npm:18.2.0"]\
         ],\
         "packagePeers": [\

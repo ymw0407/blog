@@ -13,7 +13,7 @@ export const HomeText = ({
   description: string;
 }) => {
   return (
-    <div className="pt-5 px-7">
+    <div className="">
       <div>
         <SubTitle subTitle={subTitle} />
         <br />

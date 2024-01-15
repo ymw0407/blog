@@ -1882,6 +1882,7 @@ __metadata:
     postcss: "npm:^8.4.32"
     react: "npm:^18"
     react-dom: "npm:^18"
+    react-feather: "npm:^2.0.10"
     tailwindcss: "npm:^3.4.0"
     ts-jest: "npm:^29.1.1"
     typescript: "npm:^5.3.3"
@@ -5710,7 +5711,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"prop-types@npm:^15.8.1":
+"prop-types@npm:^15.7.2, prop-types@npm:^15.8.1":
   version: 15.8.1
   resolution: "prop-types@npm:15.8.1"
   dependencies:
@@ -5776,6 +5777,17 @@ __metadata:
   peerDependencies:
     react: ">=16.13.1"
   checksum: f977ca61823e43de2381d53dd7aa8b4d79ff6a984c9afdc88dc44f9973b99de7fd382d2f0f91f2688e24bb987c0185bf45d0b004f22afaaab0f990a830253bfb
+  languageName: node
+  linkType: hard
+
+"react-feather@npm:^2.0.10":
+  version: 2.0.10
+  resolution: "react-feather@npm:2.0.10"
+  dependencies:
+    prop-types: "npm:^15.7.2"
+  peerDependencies:
+    react: ">=16.8.6"
+  checksum: bcc312ab39a710d8fa6fb611fde2affb38cf183fa5215d46c78577d88950ecb9181b59e4b57d7683f543d25725a39deb0c2ad9a9f29cab1a44bf4cbca46e6b8e
   languageName: node
   linkType: hard
 
