@@ -1,1 +1,18 @@
-[]
+[
+  {
+    "id": "2025-10-22-4-7f02",
+    "title": "4생활관 부산여행",
+    "intent": "해군 SW개발병으로 군복무하던 시절, 개발병들끼리 단체로 부산여행을 가서 찍은 사진입니다.",
+    "assets": [
+      {
+        "url": "media/assets/gallery/2025-10-22-4-7f02/1772475596210-_79A9522-2.jpg",
+        "alt": "_79A9522-2.jpg"
+      }
+    ],
+    "pinned": false,
+    "date": "2025-10-22",
+    "camera": "Canon EOS R6 mark II",
+    "lens": "RF 24-70mm f2.8 L",
+    "location": "Busan, KR"
+  }
+]
