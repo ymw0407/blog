@@ -1,0 +1,31 @@
+{
+  "title": "새로운글 작성해보기",
+  "datetime": "2026-03-02T18:31:14.862Z",
+  "date": "2026-03-02",
+  "category": "dev",
+  "tags": [
+    "ㅁㄴㅇㄻㄴㅇㄹ"
+  ],
+  "summary": "ㅁㄴㅇㄻㄴㅇㄹ",
+  "thumbnail": {
+    "src": "media/assets/posts/dev/new-post/1772476294202-_79A5540-2.jpg",
+    "alt": "_79A5540-2.jpg"
+  },
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "ㅁㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄻㄴㅇㄹ"
+          }
+        ]
+      }
+    ]
+  }
+}
