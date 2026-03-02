@@ -2,7 +2,7 @@ name: Dispatch blog-web build
 
 on:
   push:
-    branches: [main]
+    branches: [main, master]
   issues:
     types: [opened, edited, closed, reopened, labeled, unlabeled]
   issue_comment:
@@ -26,4 +26,3 @@ jobs:
               "sha": "${{ github.sha }}",
               "event": "${{ github.event_name }}"
             }
-
