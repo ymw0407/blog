@@ -1,0 +1,56 @@
+{
+  "title": "2-Repo GitHub Pages 블로그 아키텍처 노트",
+  "date": "2026-02-27",
+  "category": "dev",
+  "tags": ["architecture", "github-pages", "pkce", "octokit"],
+  "summary": "정적 Read + PKCE/Octokit Write로 운영하는 개인 블로그 구조를 정리한다.",
+  "thumbnail": {
+    "src": "https://placehold.co/1200x750/png?text=Architecture+Notes",
+    "alt": "Architecture notes thumbnail"
+  },
+  "draft": true,
+  "content": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "이 글은 템플릿을 이해하기 위한 개인 노트다. (예시)" }] },
+      {
+        "type": "heading",
+        "attrs": { "level": 2 },
+        "content": [{ "type": "text", "text": "핵심 아이디어" }]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Read는 빌드 타임에 생성한 JSON 인덱스로만 처리한다." }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Write는 로그인 사용자만 GitHub API(Octokit)로 Repo B에 커밋한다." }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Repo B push → Repo A 빌드 트리거 → Pages 배포로 정적 운영을 유지한다." }] }] }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "level": 2 },
+        "content": [{ "type": "text", "text": "로컬 개발 팁" }]
+      },
+      {
+        "type": "blockquote",
+        "content": [
+          {
+            "type": "paragraph",
+            "content": [
+              { "type": "text", "text": "GitHub OAuth 연결 없이도 개발 가능해야 한다. 그래서 LOCAL 모드가 있다." }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "content": [
+          {
+            "type": "text",
+            "text": "# Repo A에서\npnpm install\npnpm run index-content\npnpm dev\n\n# (선택) Repo B를 content/로 연결\n# Windows: Junction 사용\n# New-Item -ItemType Junction -Path content -Target ..\\blog-content\n"
+          }
+        ]
+      }
+    ]
+  }
+}

@@ -1,0 +1,36 @@
+{
+  "title": "Weekend Trip Note: 48시간 플랜",
+  "date": "2026-02-27",
+  "category": "travel",
+  "tags": ["itinerary", "packing", "notes"],
+  "summary": "짧은 여행을 덜 피곤하게 만드는 체크리스트. (예시)",
+  "thumbnail": {
+    "src": "https://placehold.co/1200x750/png?text=Trip+Note",
+    "alt": "Trip note thumbnail"
+  },
+  "draft": true,
+  "content": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "여행은 ‘많이’보다 ‘잘’이 중요하다. 동선을 단순하게." }] },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "Day 1" }] },
+      {
+        "type": "bulletList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "점심: 숙소 근처 1km 내에서 해결" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "산책: 해질 무렵 60분" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "사진: 한 장소에서 20컷만" }] }] }
+        ]
+      },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "Packing" }] },
+      {
+        "type": "orderedList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "충전기/보조배터리" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "여벌 티 1 + 속옷 2" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "작은 우산" }] }] }
+        ]
+      }
+    ]
+  }
+}

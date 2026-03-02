@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="750" viewBox="0 0 1200 750">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b1220"/>
+      <stop offset="1" stop-color="#06121f"/>
+    </linearGradient>
+    <radialGradient id="blob1" cx="30%" cy="35%" r="80%">
+      <stop offset="0" stop-color="#38bdf8" stop-opacity="0.38"/>
+      <stop offset="0.6" stop-color="#f59e0b" stop-opacity="0.14"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <radialGradient id="blob2" cx="72%" cy="66%" r="80%">
+      <stop offset="0" stop-color="#fb7185" stop-opacity="0.28"/>
+      <stop offset="0.65" stop-color="#22c55e" stop-opacity="0.10"/>
+      <stop offset="1" stop-color="#000" stop-opacity="0"/>
+    </radialGradient>
+    <filter id="soft" x="-30%" y="-30%" width="160%" height="160%">
+      <feGaussianBlur stdDeviation="22"/>
+    </filter>
+  </defs>
+  <rect width="1200" height="750" fill="url(#bg)"/>
+  <circle cx="380" cy="300" r="350" fill="url(#blob1)" filter="url(#soft)"/>
+  <circle cx="860" cy="520" r="320" fill="url(#blob2)" filter="url(#soft)"/>
+  <g fill="#ffffff" font-family="ui-sans-serif, system-ui, -apple-system, Segoe UI, Roboto, Arial" text-anchor="middle">
+    <text x="600" y="360" font-size="56" font-weight="760" opacity="0.95">Trip Note</text>
+    <text x="600" y="412" font-size="18" font-weight="540" opacity="0.72">Example thumbnail</text>
+  </g>
+</svg>

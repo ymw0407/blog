@@ -1,0 +1,30 @@
+{
+  "title": "Brew Notes: 15g / 250g, 92°C",
+  "date": "2026-02-27",
+  "category": "coffee",
+  "tags": ["brew", "recipe", "notes"],
+  "summary": "오늘의 레시피와 맛 기록. (예시)",
+  "thumbnail": {
+    "src": "media/assets/posts/thumbnails/coffee-notes.svg",
+    "alt": "Coffee notes thumbnail"
+  },
+  "draft": true,
+  "content": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "짧게 기록해도 누적되면 내 취향 데이터가 된다." }] },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "Recipe" }] },
+      {
+        "type": "bulletList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Dose: 15g" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Water: 250g" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Temp: 92°C" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "Time: 2:45" }] }] }
+        ]
+      },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "Tasting" }] },
+      { "type": "paragraph", "content": [{ "type": "text", "text": "첫 인상은 살구/꿀. 후반은 깔끔한 홍차 느낌. 다음엔 분쇄를 한 단계 곱게." }] }
+    ]
+  }
+}

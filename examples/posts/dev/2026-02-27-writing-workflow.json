@@ -1,0 +1,37 @@
+{
+  "title": "Planning as Code + 커밋 전략 (개인 워크플로우)",
+  "date": "2026-02-27",
+  "category": "dev",
+  "tags": ["planning", "conventional-commits", "workflow"],
+  "summary": "문서 먼저, 변경 로그 기록, 그 다음 구현. 작게 자주 커밋한다.",
+  "thumbnail": {
+    "src": "https://placehold.co/1200x750/png?text=Writing+Workflow",
+    "alt": "Writing workflow thumbnail"
+  },
+  "draft": true,
+  "content": {
+    "type": "doc",
+    "content": [
+      { "type": "paragraph", "content": [{ "type": "text", "text": "팀이 없어도 운영 비용을 줄이는 방법은 프로세스를 코드처럼 다루는 것이다." }] },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "규칙" }] },
+      {
+        "type": "orderedList",
+        "content": [
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "문서 수정(ROADMAP/FEATURES/DECISIONS)" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "CHANGELOG 기록" }] }] },
+          { "type": "listItem", "content": [{ "type": "paragraph", "content": [{ "type": "text", "text": "코드 구현" }] }] }
+        ]
+      },
+      { "type": "heading", "attrs": { "level": 2 }, "content": [{ "type": "text", "text": "커밋 메시지 예시" }] },
+      {
+        "type": "codeBlock",
+        "content": [
+          {
+            "type": "text",
+            "text": "feat(timeline): add category filter\n\nfeat(post): add dev/2026-02-27-architecture-notes\nGenerated-By: blog-web\nSource-User: <github-username>\n"
+          }
+        ]
+      }
+    ]
+  }
+}
