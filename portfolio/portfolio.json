@@ -2,5 +2,26 @@
   "name": "",
   "headline": "",
   "links": [],
-  "projects": []
+  "projects": [],
+  "profile": {
+    "title": "Profile",
+    "doc": {
+      "type": "doc",
+      "content": [
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "asdf"
+            }
+          ]
+        }
+      ]
+    },
+    "updatedAt": "2026-03-02T18:16:34.733Z"
+  }
 }
