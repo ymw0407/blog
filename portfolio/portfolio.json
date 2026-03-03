@@ -1,14 +1,15 @@
 {
   "name": "윤민우",
-  "headline": "헤드라인",
+  "headline": "Software Developer",
   "cover": {
-    "src": "media/assets/portfolio/cover/1772533459551-20221209_071938--1-.jpg",
+    "src": "media/assets/portfolio/cover/1772534223632-_79A9931.jpg",
     "alt": "2022년 임베디드SW 경진대회에 참여하며 찍은 사진"
   },
   "photo": {
     "src": "media/assets/portfolio/profile/1772533061291-image--3-.png",
     "alt": "해군 SW개발병으로 복무하며 찍은 사진"
   },
+  "summary": "현재 분산컴퓨팅 분야에 관심을 갖고 공부하고 있는 윤민우라고 합니다.",
   "skills": [
     "Go",
     "Typescript",
@@ -38,6 +39,7 @@
       "url": "https://www.instagram.com/ymw0407"
     }
   ],
+  "facts": [],
   "profile": {
     "title": "Sinav",
     "doc": {
@@ -133,9 +135,74 @@
     "Korean (native)",
     "English (basic)"
   ],
+  "work": [
+    {
+      "org": "Republic of Korea Navy, HQ",
+      "title": "SW 개발병",
+      "period": {
+        "from": "2024-04-15",
+        "to": "2025-12-14"
+      },
+      "stacks": [
+        "Java",
+        "Typescript",
+        "Spring Boot",
+        "React",
+        "Oracle"
+      ],
+      "location": "Gyeryong, Seoul",
+      "description": "대한민국 해군 SW개발병(전문특기병)으로 복무하며, 구체계 유지보수 및 신체계 개발을 맡았습니다.\n국방망이라는 인트라넷에서 설계부터, 디자인, ERD, UI, 서버 개발까지 모두 투입되어 웹 개발 전반을 경험할 수 있었습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/work/0-republic-of-korea-navy-hq-sw/1772534831208-RDOBiOwdEsfHEZ0kHrQBtkxtcBaVCHvrHd2G2R0slDwm5C39lnjVzE-OLSWDXyHGGtHiK2IYCnL3GA4Oh5ThVg.svg",
+        "alt": "RDOBiOwdEsfHEZ0kHrQBtkxtcBaVCHvrHd2G2R0slDwm5C39lnjVzE-OLSWDXyHGGtHiK2IYCnL3GA4Oh5ThVg.svg"
+      },
+      "links": []
+    },
+    {
+      "org": "Concat Inc.",
+      "title": "Backend Intern",
+      "period": {
+        "from": "2023-06-22",
+        "to": "2024-02-27"
+      },
+      "stacks": [
+        "Go",
+        "gRPC",
+        "Dart",
+        "Flutter",
+        "GCP"
+      ],
+      "location": "",
+      "description": "Jun. 2023 – Aug. 2023 / Nov. 2023 – Mar. 2024\n\n\n백엔드 개발을 담당했으며, Google Cloud Platform에서 Go 및 gRPC를 사용하여 신속한 프로토타이핑과 확장 가능한 서비스 설계에 집중했습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/work/1-concat-inc-backend-intern/1772535200067-concat_inc_logo.jpg",
+        "alt": "concat_inc_logo.jpg"
+      },
+      "links": []
+    }
+  ],
   "awards": [],
   "certificates": [],
-  "education": [],
+  "education": [
+    {
+      "school": "국민대학교",
+      "degree": "소프트웨어전공",
+      "period": {
+        "from": "2022-03-01"
+      },
+      "description": "국민대학교 소프트웨어학부에 입학하여, 오픈소스 소프트웨어 학회 KOSS에서 활동하였으며, 현재 여러가지 프로젝트를 진행하며 공부하고 있습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/education/0-new-school/1772534407874-kookmin_uni.png",
+        "alt": "국민대학교 로고"
+      },
+      "links": [
+        {
+          "label": "School",
+          "url": "https://kookmin.ac.kr/"
+        }
+      ]
+    }
+  ],
   "publications": [],
   "projects": []
 }
