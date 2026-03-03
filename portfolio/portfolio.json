@@ -258,10 +258,9 @@
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/0-sql-sqld/1772559917403-1769943943456.jpg",
+        "src": "media/assets/portfolio/certificates/0-sql-sqld/1772560646829-SQLD.jpg",
         "alt": "1769943943456.jpg"
-      },
-      "links": []
+      }
     },
     {
       "title": "Telecommunications Technology Association 로고 국가공인자격 / SW테스트전문가(CSTS) 일반등급(Foundation Level)",
@@ -271,10 +270,9 @@
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/1-telecommunications-technology-association-sw-csts-foundation-level/1772560034147-1769943792722.jpg",
+        "src": "media/assets/portfolio/certificates/1-telecommunications-technology-association-sw-csts-foundation-level/1772560663807-CSTS.jpg",
         "alt": "1769943792722.jpg"
-      },
-      "links": []
+      }
     },
     {
       "title": "국가공인자격 / 리눅스마스터 2급",
@@ -284,10 +282,9 @@
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/2-2/1772560126787-1769943124743.jpg",
+        "src": "media/assets/portfolio/certificates/2-2/1772560670358-------.png",
         "alt": "1769943124743.jpg"
-      },
-      "links": []
+      }
     },
     {
       "title": "국가기술자격 / 정보처리산업기사",
@@ -297,10 +294,9 @@
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/3-certificate/1772560169803-1769942895001.jpg",
+        "src": "media/assets/portfolio/certificates/3-certificate/1772560680846---------.webp",
         "alt": "1769942895001.jpg"
-      },
-      "links": []
+      }
     },
     {
       "title": "국가기술자격 / 웹디자인개발기능사",
@@ -310,23 +306,21 @@
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/4-new-certificate/1772560196474-1769942646357.jpg",
+        "src": "media/assets/portfolio/certificates/4-certificate/1772560686563----------.jpg",
         "alt": "1769942646357.jpg"
-      },
-      "links": []
+      }
     },
     {
-      "title": "국가공인자격 / 네트워크관리사 2급 ",
+      "title": "국가공인자격 / 네트워크관리사 2급",
       "issuer": "ICQA(한국정보통신자격협회)",
       "period": {
         "from": "2025-09-30"
       },
       "description": "",
       "logo": {
-        "src": "media/assets/portfolio/certificates/5-2/1772560242031-1769942487122.jpg",
+        "src": "media/assets/portfolio/certificates/5-2/1772560694427--------.jpg",
         "alt": "1769942487122.jpg"
-      },
-      "links": []
+      }
     }
   ],
   "education": [
