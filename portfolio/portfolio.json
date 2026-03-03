@@ -1,8 +1,43 @@
 {
-  "name": "",
-  "headline": "",
-  "links": [],
-  "projects": [],
+  "name": "윤민우",
+  "headline": "헤드라인",
+  "cover": {
+    "src": "media/assets/portfolio/cover/1772533459551-20221209_071938--1-.jpg",
+    "alt": "2022년 임베디드SW 경진대회에 참여하며 찍은 사진"
+  },
+  "photo": {
+    "src": "media/assets/portfolio/profile/1772533061291-image--3-.png",
+    "alt": "해군 SW개발병으로 복무하며 찍은 사진"
+  },
+  "skills": [
+    "Go",
+    "Typescript",
+    "Java",
+    "gRPC",
+    "Spring Boot",
+    "NestJS",
+    "React",
+    "C++",
+    "Lightroom"
+  ],
+  "links": [
+    {
+      "label": "Blog",
+      "url": "https://blog.sinav.cloud/"
+    },
+    {
+      "label": "LinkedIn",
+      "url": "https://www.linkedin.com/in/ymw0407/"
+    },
+    {
+      "label": "GitHub",
+      "url": "https://github.com/ymw0407"
+    },
+    {
+      "label": "Instagram",
+      "url": "https://www.instagram.com/ymw0407"
+    }
+  ],
   "profile": {
     "title": "Sinav",
     "doc": {
@@ -83,5 +118,24 @@
       ]
     },
     "updatedAt": "2026-03-02T18:29:01.425Z"
-  }
+  },
+  "contact": {
+    "phone": "",
+    "email": "sinav.dev@gmail.com",
+    "location": "Seoul, Korea"
+  },
+  "hobbies": [
+    "Photography (Digital & Film)",
+    "Drip Coffee",
+    "Piano"
+  ],
+  "languages": [
+    "Korean (native)",
+    "English (basic)"
+  ],
+  "awards": [],
+  "certificates": [],
+  "education": [],
+  "publications": [],
+  "projects": []
 }
