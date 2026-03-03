@@ -7,6 +7,14 @@
     {
       "src": "media/assets/site/hero/1772508916217-_79A4043-2.jpg",
       "alt": "_79A4043-2.jpg"
+    },
+    {
+      "src": "media/assets/site/hero/1772510631699-image--1-.png",
+      "alt": "image (1).png"
+    },
+    {
+      "src": "media/assets/site/hero/1772510643713-image--1-.png",
+      "alt": "image (1).png"
     }
   ],
   "social": [
@@ -27,8 +35,8 @@
     },
     {
       "icon": "website",
-      "label": "blog",
-      "url": "https://ymw0407.github.io/blog-sinav-theme"
+      "label": "Blog",
+      "url": "https://blog.sinav.cloud/"
     }
   ],
   "heroImage": null
