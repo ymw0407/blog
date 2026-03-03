@@ -1,9 +1,14 @@
 {
-  "siteName": "blog",
-  "heroTitle": "Personal Blog ㅁㅇㄴㄹ",
-  "heroSubtitle": "Dev · Coffee · Travel · Photo · Alcohol — 정적 인덱스 기반 읽기 + (옵션) GitHub OAuth(PKCE) 쓰기.",
-  "kicker": "Minimal · GitHub Pages · PKCE · 2-Repo",
-  "heroMedia": [],
+  "siteName": "sinav blog",
+  "heroTitle": "개인 블로그",
+  "heroSubtitle": "Dev · Coffee · Travel · Photo · Alcohol — 일상을 기록하다.",
+  "kicker": "Minwoo Yun's Personal Page",
+  "heroMedia": [
+    {
+      "src": "media/assets/site/hero/1772508916217-_79A4043-2.jpg",
+      "alt": "_79A4043-2.jpg"
+    }
+  ],
   "social": [
     {
       "icon": "github",
