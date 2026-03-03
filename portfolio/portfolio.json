@@ -183,7 +183,73 @@
       "links": []
     }
   ],
-  "awards": [],
+  "awards": [
+    {
+      "title": "한국오픈소스협회 「제17회 공개SW 개발자대회」 학생부문 은상",
+      "issuer": "한국정보과학회 회장상",
+      "period": {
+        "from": "2023-12-01"
+      },
+      "description": "Open-Set-Go 프로젝트를 진행하여, 공개SW 개발자 대회에서 학생 부문 은상을 수상하였습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/awards/0-new-award/1772558792367-image--2-.png",
+        "alt": "공개SW 개발자대회 학생부문 은상"
+      },
+      "links": [
+        {
+          "label": "project",
+          "url": "https://www.open-set-go.com/"
+        },
+        {
+          "label": "docs",
+          "url": "https://docs.open-set-go.com/"
+        },
+        {
+          "label": "github",
+          "url": "https://github.com/AgainIoT/Open-Set-Go"
+        }
+      ]
+    },
+    {
+      "title": "한국정보과학회 「한국소프트웨어종합학술대회, KSC 2023」 오픈소스소프트웨어 분야 최우수논문상",
+      "issuer": "한국정보과학회 회장상",
+      "period": {
+        "from": "2023-12-21"
+      },
+      "description": "KSC 2023 학술대회에서 \"오픈소스 운영 진입장벽 완화를 위한 오픈소스 프로젝트 생성 및 운영 관리 서비스\"라는 논문을 투고하여 최우수논문상을 수상하였습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/awards/1-ksc-2023/1772559137849-1770061179979.jpg",
+        "alt": "오픈소스소프트웨어 분야 최우수논문상"
+      },
+      "links": []
+    },
+    {
+      "title": "임베디드SW·System산업협회 「제20회 임베디드SW경진대회」 전부문 대상",
+      "issuer": "산업통상자원부 장관상",
+      "period": {
+        "from": "2022-12-15"
+      },
+      "description": "임베디드SW경진대회에 webOS(LG전자 후원) 부문에 참여하여 webOS 기반의 월패드 플랫폼, Home++를 개발하여 전부문 대상을 수상하였습니다.",
+      "logo": {
+        "src": "media/assets/portfolio/awards/2-sw-system-20-sw/1772559316342-1701603178543.jpg",
+        "alt": "임베디드SW경진대회 대상"
+      },
+      "links": [
+        {
+          "label": "github",
+          "url": "https://github.com/ymw0407/2022ESWContest_webOS_3013"
+        },
+        {
+          "label": "official blog",
+          "url": "https://www.webosose.org/blog/2022/12/29/embedded-sw-contest-2022/"
+        },
+        {
+          "label": "article",
+          "url": "https://www.newswire.co.kr/newsRead.php?no=958263"
+        }
+      ]
+    }
+  ],
   "certificates": [],
   "education": [
     {
@@ -192,14 +258,14 @@
       "period": {
         "from": "2022-03-01"
       },
-      "description": "국민대학교 소프트웨어학부에 입학하여, 오픈소스 소프트웨어 학회 KOSS에서 활동하였으며, 현재 여러가지 프로젝트를 진행하며 공부하고 있습니다.",
+      "description": "컴퓨터 과학을 단순한 추상화의 집합이 아니라, 구조를 이해하기 위한 도구로 배우고 있습니다. 운영체제와 네트워크, 데이터 흐름에 관심을 두며, 확장 가능하고 통제 가능한 시스템을 설계하는 것을 목표로 학습하고 있습니다.",
       "logo": {
         "src": "media/assets/portfolio/education/0-education/1772535323043-2N6qB-at3Kad9909SlvUEM_p0hvgCf13AeCY14qgvLGkfvv-Es8S1enQVk7RjYm8ZEru9THLC0T1faMofJbItw.svg",
         "alt": "국민대학교 로고"
       },
       "links": [
         {
-          "label": "School",
+          "label": "website",
           "url": "https://kookmin.ac.kr/"
         }
       ]
@@ -210,10 +276,14 @@
       "title": "오픈소스 운영 진입장벽 완화를 위한 프로젝트 생성 및 운영 관리 서비스",
       "venue": "KTCP(KIISE Transactions on Computing Practices)",
       "description": "오픈소스 소프트웨어는 소스 코드를 공개하여 제한없이 활용, 수정, 배포가 가능한 소프트웨어를 말한다. 이 연구에서는 오픈소스 기여에 대한 진입장벽이 매우 높다는 점에 착안하여 오픈소스 프로젝트 운영에 필요한 다양한 기능들을 총괄적으로 제공함으로써 프로젝트 시작 및 운영을 돕는 도구인 Open-Set-Go를 개발하였다. 개발한 서비스는 크게 리포지토리 생성, 오픈소스 운영 평가, 오픈소스 가이드 라인 제공까지 총 세 가지 기능을 제공한다. 이 서비스는 대학 등 교육기관에서의 프로젝트 기반 소프트웨어 교육에 활용할 수 있다. 특히 소프트웨어 개발에 입문한 개발자들이 오픈소스에 대한 진입 및 기여 기회를 제공함으로써 오픈소스 커뮤니티를 활성화하고 오픈소스 생태계에 기여할 수 있을 것으로 기대한다.",
+      "logo": {
+        "src": "media/assets/portfolio/publications/0/1772559267560-is_598720.jpg",
+        "alt": "favicon.png"
+      },
       "links": [
         {
-          "label": "project",
-          "url": "open-set-go.com"
+          "label": "relative project",
+          "url": "https://www.open-set-go.com/"
         }
       ]
     }
