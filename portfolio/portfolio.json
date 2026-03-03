@@ -220,8 +220,7 @@
       "logo": {
         "src": "media/assets/portfolio/awards/1-ksc-2023/1772559137849-1770061179979.jpg",
         "alt": "오픈소스소프트웨어 분야 최우수논문상"
-      },
-      "links": []
+      }
     },
     {
       "title": "임베디드SW·System산업협회 「제20회 임베디드SW경진대회」 전부문 대상",
@@ -250,7 +249,86 @@
       ]
     }
   ],
-  "certificates": [],
+  "certificates": [
+    {
+      "title": "국가공인자격 / SQL 개발자 (SQLD)",
+      "issuer": "KData(한국데이터산업진흥원)",
+      "period": {
+        "from": "2024-04-05"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/0-sql-sqld/1772559917403-1769943943456.jpg",
+        "alt": "1769943943456.jpg"
+      },
+      "links": []
+    },
+    {
+      "title": "Telecommunications Technology Association 로고 국가공인자격 / SW테스트전문가(CSTS) 일반등급(Foundation Level)",
+      "issuer": "TTA(한국정보통신기술협회)",
+      "period": {
+        "from": "2025-02-22"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/1-telecommunications-technology-association-sw-csts-foundation-level/1772560034147-1769943792722.jpg",
+        "alt": "1769943792722.jpg"
+      },
+      "links": []
+    },
+    {
+      "title": "국가공인자격 / 리눅스마스터 2급",
+      "issuer": "KAIT(한국정보통신진흥협회)",
+      "period": {
+        "from": "2025-03-28"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/2-2/1772560126787-1769943124743.jpg",
+        "alt": "1769943124743.jpg"
+      },
+      "links": []
+    },
+    {
+      "title": "국가기술자격 / 정보처리산업기사",
+      "issuer": "HRDK(한국산업인력공단)",
+      "period": {
+        "from": "2025-06-13"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/3-certificate/1772560169803-1769942895001.jpg",
+        "alt": "1769942895001.jpg"
+      },
+      "links": []
+    },
+    {
+      "title": "국가기술자격 / 웹디자인개발기능사",
+      "issuer": "HRDK(한국산업인력공단)",
+      "period": {
+        "from": "2025-09-26"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/4-new-certificate/1772560196474-1769942646357.jpg",
+        "alt": "1769942646357.jpg"
+      },
+      "links": []
+    },
+    {
+      "title": "국가공인자격 / 네트워크관리사 2급 ",
+      "issuer": "ICQA(한국정보통신자격협회)",
+      "period": {
+        "from": "2025-09-30"
+      },
+      "description": "",
+      "logo": {
+        "src": "media/assets/portfolio/certificates/5-2/1772560242031-1769942487122.jpg",
+        "alt": "1769942487122.jpg"
+      },
+      "links": []
+    }
+  ],
   "education": [
     {
       "school": "국민대학교",
