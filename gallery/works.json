@@ -1,5 +1,22 @@
 [
   {
+    "id": "2026-02-20-when-two-worlds-overlap-xoft",
+    "title": "When two worlds overlap.",
+    "intent": "의도적으로 이중노출을 한 것은 아니지만, 실수와 우연이 겹쳐서 만들어진 사진입니다.\n26년 유럽 여행 중 스위스 체르마트에서 마테호른을 바라보며 찍었습니다.",
+    "assets": [
+      {
+        "url": "media/assets/gallery/2026-02-20-when-two-worlds-overlap-xoft/1772606151930-000023990005_5-2.jpg",
+        "alt": "000023990005_5-2.jpg"
+      }
+    ],
+    "pinned": false,
+    "date": "2026-02-20",
+    "camera": "Mamiya C3 Professional",
+    "lens": "Mamiya C3 105mm f/3.5",
+    "film": "Kodak Gold 200 - 120 format",
+    "location": "Zermatt, Swiss"
+  },
+  {
     "id": "2025-10-23-captured-by-film-6v8g",
     "title": "부산 여행 captured by film",
     "intent": "2025년 4생활관 단체 부산 여행을 가서 필름으로 찍은 사진입니다.\n전우들과 함께한 여행을 사진으로 담을 수 있어서 좋았고, 저 뿐만이 아니라 여러 명의 추억이 된 것 같아 뿌듯합니다.",
