@@ -139,7 +139,19 @@
         "content": [
           {
             "type": "text",
-            "text": "Click: 87 Click"
+            "text": "Click: 82 Click"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Temp: 93°C"
           }
         ]
       },
@@ -198,7 +210,7 @@
                 "content": [
                   {
                     "type": "text",
-                    "text": "2차: 150ml"
+                    "text": "2차: 170ml"
                   }
                 ]
               }
@@ -215,7 +227,7 @@
                 "content": [
                   {
                     "type": "text",
-                    "text": "3차: 220ml"
+                    "text": "3차: 240ml"
                   }
                 ]
               }
