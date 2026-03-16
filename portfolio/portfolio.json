@@ -54,31 +54,20 @@
           "content": [
             {
               "type": "text",
-              "text": "asdf asfasdfasdf"
-            }
-          ]
-        },
-        {
-          "type": "paragraph",
-          "attrs": {
-            "textAlign": null
-          }
-        },
-        {
-          "type": "paragraph",
-          "attrs": {
-            "textAlign": null
-          }
-        },
-        {
-          "type": "paragraph",
-          "attrs": {
-            "textAlign": null
-          },
-          "content": [
+              "text": "저는 기능을 구현하는 것에서 출발해, 점차 "
+            },
             {
               "type": "text",
-              "text": "asdfsdfasdfa"
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "시스템의 구조와 제약을 이해하는 방향으로 사고가 확장된 개발자"
+            },
+            {
+              "type": "text",
+              "text": "입니다."
             }
           ]
         },
@@ -90,7 +79,42 @@
           "content": [
             {
               "type": "text",
-              "text": "asdfasdf"
+              "text": "처음 개발을 시작했을 때는 머릿속의 아이디어를 실제로 구현해 결과물을 만들어내는 과정 자체가 가장 큰 동기였습니다. 하지만 첫 프로젝트였던 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "link",
+                  "attrs": {
+                    "href": "https://www.notion.so/Home-2f4444cd83368192bca3fa003d2e3a79?pvs=21",
+                    "target": "_blank",
+                    "rel": "noreferrer",
+                    "class": null
+                  }
+                },
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "webOS 기반 월패드 플랫폼(Home++)"
+            },
+            {
+              "type": "text",
+              "text": "을 진행하면서, 단순한 기능 구현보다 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "플랫폼이 가진 제약을 분석하고 그 안에서 가능한 해결 방법을 찾는 과정"
+            },
+            {
+              "type": "text",
+              "text": "에 더 큰 흥미를 느끼게 되었습니다. 실제로 프로젝트를 진행하며 LS2 API의 동작 방식과 권한 구조를 분석했고, API의 동작 문제를 발견해 버그 리포트를 제출하기도 했습니다."
             }
           ]
         },
@@ -102,7 +126,33 @@
           "content": [
             {
               "type": "text",
-              "text": "asdfa"
+              "text": "이후 여러 서버 중심 프로젝트를 수행하면서, 서로 다른 서비스임에도 불구하고 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "유사한 API 구조와 데이터 흐름이 반복적으로 등장한다는 점"
+            },
+            {
+              "type": "text",
+              "text": "을 인식하게 되었습니다. 이 경험은 저의 관심을 개별 기능 구현에서 벗어나 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "시스템 전체의 구조와 흐름을 이해하는 방향으로 변화시키는 계기"
+            },
+            {
+              "type": "text",
+              "text": "가 되었습니다."
             }
           ]
         },
@@ -114,13 +164,189 @@
           "content": [
             {
               "type": "text",
-              "text": "sdf"
+              "text": "이러한 변화는 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "link",
+                  "attrs": {
+                    "href": "https://www.notion.so/Open-Set-Go-2f4444cd8336810c9931caa816b744e1?pvs=21",
+                    "target": "_blank",
+                    "rel": "noreferrer",
+                    "class": null
+                  }
+                }
+              ],
+              "text": "Open-Set-Go"
+            },
+            {
+              "type": "text",
+              "text": " "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "프로젝트"
+            },
+            {
+              "type": "text",
+              "text": "에서 더욱 분명해졌습니다. 이 프로젝트에서는 단순한 기능 구현보다 오픈소스 협업 환경을 위한 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "Git workflow 설계, CI/CD 파이프라인 구성, 프로젝트 운영 구조 설계"
+            },
+            {
+              "type": "text",
+              "text": "에 깊이 관여하게 되었고, 시스템을 하나의 구조로 바라보는 사고 방식이 저에게 더 잘 맞는다는 것을 확인할 수 있었습니다."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "프로젝트 경험이 쌓일수록 저는 자연스럽게 다음과 같은 질문을 하게 되었습니다."
+            }
+          ]
+        },
+        {
+          "type": "bulletList",
+          "content": [
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "시스템은 어떤 전제 위에서 동작하는가"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "구조적 선택이 성능과 안정성에 어떤 영향을 미치는가"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "type": "listItem",
+              "content": [
+                {
+                  "type": "paragraph",
+                  "attrs": {
+                    "textAlign": null
+                  },
+                  "content": [
+                    {
+                      "type": "text",
+                      "text": "작업을 어떻게 분할하고 데이터 흐름을 설계해야 하는가"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "이러한 질문들은 자연스럽게 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "분산 환경에서의 시스템 설계 문제"
+            },
+            {
+              "type": "text",
+              "text": "로 이어졌고, 저는 복잡한 시스템을 이해하고 구조적으로 해결하는 과정에서 가장 큰 몰입을 느낀다는 것을 깨닫게 되었습니다."
+            }
+          ]
+        },
+        {
+          "type": "paragraph",
+          "attrs": {
+            "textAlign": null
+          },
+          "content": [
+            {
+              "type": "text",
+              "text": "지금도 저는 문제를 해결할 때 "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "코드 구현 이전에 시스템의 구조와 제약을 먼저 이해하려는 방식"
+            },
+            {
+              "type": "text",
+              "text": "으로 접근합니다. 앞으로도 단순히 기능을 구현하는 개발자가 아니라, "
+            },
+            {
+              "type": "text",
+              "marks": [
+                {
+                  "type": "bold"
+                }
+              ],
+              "text": "시스템의 구조를 이해하고 설계로 문제를 해결하는 엔지니어"
+            },
+            {
+              "type": "text",
+              "text": "로 성장하고자 합니다."
             }
           ]
         }
       ]
     },
-    "updatedAt": "2026-03-02T18:29:01.425Z"
+    "updatedAt": "2026-03-16T17:49:10.279Z"
   },
   "contact": {
     "phone": "",
