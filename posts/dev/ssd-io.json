@@ -1,0 +1,1256 @@
+{
+  "title": "SSD가 빨라진 시대의 I/O 완료 방식",
+  "datetime": "2026-03-31T03:57:11.207Z",
+  "date": "2026-03-31",
+  "category": "dev",
+  "tags": [
+    "시스템최신기술",
+    "Interrupt",
+    "DPAS",
+    "Polling",
+    "Linux Hybrid Polling"
+  ],
+  "summary": "SSD가 빨라진 시대의 I/O 완료 방식: Interrupt, Polling, Linux Hybrid Polling, PAS, DPAS",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "현대 SSD는 더 이상 “느린 저장장치”가 아니다. 과거 하드디스크 중심의 운영체제 설계에서는 저장장치가 워낙 느렸기 때문에, CPU와 커널이 I/O를 처리하는 과정에서 들어가는 소프트웨어 오버헤드는 상대적으로 큰 문제가 아니었다. 그러나 NVMe SSD가 등장하고, 나아가 초저지연 SSD와 고성능 TLC NAND SSD가 보편화되면서 상황이 달라졌다. 이제는 저장장치 자체의 지연 시간이 수십 마이크로초, 경우에 따라서는 그보다 더 낮은 수준으로 내려오면서, 기존에는 가려져 있던 소프트웨어 오버헤드가 전체 I/O 응답 시간에서 매우 큰 비중을 차지하게 되었다. FAST ’26의 DPAS 슬라이드는 바로 이 지점을 출발점으로 삼는다. 더 이상 “디바이스가 느리니 소프트웨어 오버헤드는 무시해도 된다”는 가정이 통하지 않으며, I/O 완료를 어떤 방식으로 감지하고 처리할 것인지가 스토리지 시스템 전체 성능의 핵심 문제가 되었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 글은 이러한 배경 위에서, 인터럽트 기반 I/O 완료 방식이 왜 문제가 되는지, 고전적 폴링이 왜 빠르지만 현실적으로 위험한지, Linux Hybrid Polling이 어떤 절충안이었고 왜 한계를 드러냈는지, 그리고 PAS와 DPAS가 어떤 문제의식에서 제안되었는지를 처음 보는 사람도 따라올 수 있도록 길고 자세하게 정리한 것이다. 설명은 가능한 한 줄글 중심으로 풀어가되, 필요한 곳에서는 개념적 구분을 위해 최소한의 제목만 사용한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "1. I/O 완료라는 문제는 왜 중요한가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "애플리케이션이 저장장치에 읽기나 쓰기 요청을 보내면, 요청을 던지는 것만으로 일은 끝나지 않는다. 정말 중요한 것은 “언제 이 I/O가 끝났는가”를 알아내는 일이다. 예를 들어 데이터베이스가 로그를 디스크에 기록하고, 그 기록이 실제로 안전하게 완료된 뒤에야 트랜잭션을 commit할 수 있는 상황을 생각해 보면, 완료 감지는 단순한 편의 기능이 아니라 시스템의 정확성과 지연 시간, CPU 효율을 동시에 좌우하는 핵심 메커니즘이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "전통적으로 운영체제는 I/O 완료를 인터럽트로 처리해 왔다. 디바이스가 작업을 끝내면 CPU에게 신호를 보내고, CPU는 현재 하던 일을 잠시 멈춘 뒤 커널 내부의 인터럽트 처리 경로로 들어가 완료 작업을 수행한다. 이 방식은 CPU를 쉬게 둘 수 있다는 점에서 매우 효율적이다. I/O가 오래 걸리는 하드디스크 시대에는 이 방식이 거의 이상적이었다. 디바이스가 매우 느리므로, CPU가 중간에 다른 일을 하다가 완료 시점에만 깨워지면 되었기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "문제는 SSD가 빨라지면서 나타난다. DPAS 슬라이드는 Optane, Z-SSD, XL-Flash 같은 초저지연 SSD뿐 아니라 일반적인 TLC NAND 기반 SSD조차도 이제는 인터럽트의 고정 비용을 무시할 수 없을 정도로 빨라졌다고 설명한다. 초저지연 SSD에서는 인터럽트 처리 비용이 전체 I/O 시간의 매우 큰 부분을 차지하고, 심지어 비교적 일반적인 최신 TLC SSD에서도 그 영향이 무시할 수 없다고 본다. 다시 말해, 이제는 “디바이스가 느려서 소프트웨어가 가려지는 시대”가 아니라 “디바이스가 빨라서 소프트웨어가 병목으로 드러나는 시대”가 된 것이다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "2. NVMe와 더 짧아진 데이터 경로"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 변화는 SSD 하드웨어 자체의 발전과 더불어 NVMe의 등장과도 깊이 연결되어 있다. 저장장치 강의 슬라이드는 NVMe가 왜 등장했는지를 설명하면서, SATA/AHCI 기반 스택의 한계를 지적한다. SATA SSD는 블록 레이어, AHCI 드라이버, 호스트 버스, HBA, SATA 컨트롤러를 거쳐야 하는 긴 경로를 가진 반면, NVMe SSD는 PCIe 루트 컴플렉스를 통해 훨씬 짧은 데이터 경로를 사용한다. 또한 NVMe는 다중 submission/completion queue를 제공하여 기존 AHCI의 단일 큐 구조가 가지는 병목을 해소하려고 설계되었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 점은 단순히 처리량을 높이는 이야기에서 끝나지 않는다. 하드웨어 경로가 짧아지고, 내부 병렬성이 커지고, 큐 구조가 개선되면 디바이스 측 지연은 더욱 낮아진다. 그러면 과거에는 보이지 않던 운영체제의 락, 큐 관리, 인터럽트 처리, 스케줄러 wakeup, 문맥 전환 같은 소프트웨어 레벨의 비용이 더 선명하게 드러난다. 저장장치 강의 자료가 Linux block layer의 single queue 설계가 request queue locking, hardware interrupts, remote memory access 문제를 가진다고 지적하는 이유도 바로 여기에 있다. 하드웨어가 빨라질수록, 이전에는 별 문제가 아니었던 소프트웨어 구조가 병목으로 부상한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "3. 인터럽트 기반 I/O 완료는 어떻게 동작하는가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "인터럽트 기반 I/O 완료를 이해하려면, “디바이스가 끝났다고 알려주면 CPU가 그때 처리한다”는 단순한 문장 뒤에 숨어 있는 실제 경로를 떠올려야 한다. NVMe 장치가 I/O를 완료하면 보통 MSI 또는 MSI-X 같은 메시지 기반 인터럽트를 통해 CPU에게 완료를 알린다. CPU는 현재 실행 중인 사용자 코드 또는 커널 코드의 흐름을 끊고 인터럽트 엔트리로 들어간다. 이후 ISR이 실행되고, 경우에 따라 softirq나 bottom-half 성격의 후속 처리가 이어지며, 블록 레이어나 드라이버가 완료 상태를 반영하고, 마지막으로 그 I/O를 기다리던 스레드가 깨어나 다시 실행된다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "여기서 핵심은 비용의 중심이 “MSI-X라는 전기적 신호 전달” 자체에 있는 것이 아니라, 그 이후 CPU가 겪는 일련의 소프트웨어 오버헤드에 있다는 점이다. 인터럽트 엔트리와 리턴, 레지스터 저장과 복구, 파이프라인 교란, 캐시 오염, 스케줄러 wakeup, 런큐 조정, 문맥 전환, 대기 중이던 스레드의 재실행과 워킹셋 복구 같은 비용이 누적된다. DPAS 슬라이드가 말하는 인터럽트 오버헤드는 바로 이런 “interrupt-driven completion 전체 경로”의 고정 비용이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 비용이 왜 더 문제가 되는지는 숫자의 상대성으로 이해하면 쉽다. 저장장치가 200마이크로초 걸리던 시절에는 인터럽트로 인한 몇 마이크로초 수준의 고정 비용이 전체의 작은 일부였다. 그러나 저장장치가 10마이크로초, 5마이크로초 수준으로 빨라지면 사정이 완전히 달라진다. 인터럽트 경로의 비용은 거의 그대로인데, 디바이스 시간은 크게 줄었기 때문이다. 결과적으로 인터럽트는 “항상 있는 고정 세금”처럼 작동하며, SSD가 빨라질수록 그 세금의 비중은 점점 커진다. DPAS 슬라이드가 “Interrupt overhead is fixed; it does not scale with faster SSDs”라고 말하는 이유가 바로 여기에 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "4. 그렇다면 폴링은 왜 빠른가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 고정 비용을 제거하는 가장 직접적인 방법은 인터럽트를 쓰지 않는 것이다. 폴링은 CPU가 직접 completion queue를 계속 확인하여 I/O 완료 여부를 감시하는 방식이다. NVMe 관점에서는 completion queue 엔트리가 올라왔는지를 CPU가 반복적으로 검사하는 셈이다. 디바이스가 끝나자마자 CPU가 이미 그 자리를 보고 있다면, 인터럽트, ISR, 스케줄러 wakeup, 문맥 전환 없이 곧바로 완료를 감지할 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 때문에 폴링은 매우 빠르다. DPAS 슬라이드는 4KB random read, QD=1, single thread 조건에서 3D XPoint 계열에서는 폴링이 인터럽트 대비 큰 IOPS 개선을 보이고, 일반 TLC NAND에서도 의미 있는 이득이 있다고 설명한다. 이는 폴링이 디바이스 완료와 CPU의 인지 사이에 개입하는 소프트웨어 경로를 최소화하기 때문이다. CPU는 이미 깨어 있고, 이미 해당 큐를 계속 보고 있으며, 해당 코드와 데이터가 캐시에 올라와 있을 가능성도 높다. 쉽게 말해 인터럽트가 “끝나면 불러줘”라는 수동적 모델이라면, 폴링은 “내가 여기서 직접 지켜보고 있겠다”는 적극적 모델이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "하지만 이 장점은 CPU 사용 측면에서 대가를 치른다. 폴링 루프를 도는 스레드는 쉬지 않고 runnable 상태를 유지한다. 운영체제 관점에서 보면 이 스레드는 “항상 CPU를 쓰고 싶어 하는 스레드”다. 즉, 정말로 계산을 많이 해서 CPU를 쓰는 것이 아니라, 완료를 기다리기 위해 CPU를 계속 점유하고 있는 것이다. QD=1, 단일 스레드, 전용 코어 환경에서는 이것이 큰 문제가 아닐 수 있다. 그러나 일반적인 시스템은 여러 프로세스와 스레드가 CPU를 시분할하며 공유한다. 이때 폴링은 다른 작업들과 충돌하기 시작한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "5. 왜 일반 컴퓨터에서는 폴링이 위험한가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "일반적인 Linux 시스템에서는 CPU가 여러 태스크 사이에서 시분할된다. 그렇다고 해서 폴링 스레드가 “선점되지 않는다”는 뜻은 아니다. 스케줄러는 여전히 폴링 스레드를 선점할 수 있다. 문제는 선점 가능 여부가 아니라, 폴링 스레드가 항상 runnable 상태를 유지하면서 계속 CPU를 요구한다는 사실이다. 폴링은 sleep을 하지 않으므로, 스케줄러 입장에서는 이 스레드를 매번 실행 후보로 고려해야 한다. 다른 스레드들도 runnable이면 경쟁이 발생하고, 문맥 전환과 캐시 교란이 늘어나며, 전체 시스템의 응답성이 떨어질 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "더 나아가 CPU 코어 수가 충분하다고 해서 문제가 완전히 사라지는 것도 아니다. CPU가 많아도 캐시, 메모리 대역폭, NUMA 구조, SMT 자원은 공유된다. 폴링은 completion queue를 반복적으로 확인하면서 캐시와 메모리 시스템에 부담을 준다. 같은 코어의 sibling thread가 있거나, 다른 코어에서 메모리 집약적인 작업이 함께 돌고 있다면, 폴링은 간접적으로도 다른 작업의 성능을 떨어뜨릴 수 있다. 저장장치 강의에서 block layer의 lock contention, remote memory access, NUMA 로컬리티 문제가 강조되는 것도 같은 맥락이다. 빠른 디바이스와 많은 코어가 있다고 해서 성능 문제가 자동으로 사라지는 것이 아니라, 오히려 공유 자원에 대한 경쟁이 새로운 병목으로 드러난다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드는 이를 “Polling collapses under CPU contention”이라는 표현으로 정리한다. 단일 스레드에서는 빠르지만, 스레드를 늘리면 CPU 경쟁이 커지고 폴링의 IOPS는 기대만큼 증가하지 못하거나 오히려 latency가 나빠질 수 있다. 반면 인터럽트는 CPU를 덜 점유하기 때문에 다중 스레드 환경에서 상대적으로 더 잘 스케일한다. 결국 폴링은 “가장 빠른 단일 경로”이지만, 일반 목적 운영체제에서는 “가장 좋은 전체 시스템 전략”이 아닐 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "6. Interrupt와 Polling 사이의 절충으로서 Hybrid Polling"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 딜레마는 아주 자연스럽게 절충안을 낳는다. 인터럽트는 CPU 효율이 좋지만 느리고, 폴링은 빠르지만 CPU를 너무 많이 쓴다. 그렇다면 조금만 기다렸다가 끝나면 폴링으로 처리하고, 그렇지 않으면 인터럽트로 넘기면 어떨까. 이것이 Hybrid Polling의 기본 아이디어다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Linux Hybrid Polling의 철학은 간단하다. I/O가 아주 빨리 끝날 것 같으면 CPU가 잠깐 completion을 직접 감시한다. 하지만 일정 시간 내에 완료되지 않으면, 더 이상 바쁘게 루프를 돌지 않고 sleep에 들어가거나 인터럽트 기반 경로로 넘긴다. 즉, 빠른 I/O에서는 폴링의 저지연 이점을 취하고, 느린 I/O에서는 인터럽트의 CPU 효율을 취하려는 방식이다. 직관적으로 보면 매우 합리적인 전략이다. 실제로 저장장치 계열의 여러 시스템은 오래전부터 “짧은 busy wait 후 sleep” 같은 절충을 다양한 형태로 사용해 왔다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그런데 여기에서 진짜 어려운 문제가 생긴다. “얼마나 polling해야 하는가” 혹은 “얼마나 sleep해야 하는가”를 정확히 정하는 일이 매우 어렵다. 너무 짧게 기다리면 폴링의 장점이 사라져 인터럽트와 크게 다르지 않게 된다. 너무 길게 기다리면 CPU를 낭비하고 contention을 유발한다. 결국 Hybrid Polling의 성능은 이 임계 시간의 정확한 추정에 달려 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "7. Linux Hybrid Polling의 동작 원리"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드는 Linux Hybrid Polling이 I/O completion time을 크기 기반 bucket으로 나누어 추적하고, 일정 epoch마다 평균값을 바탕으로 다음 sleep duration을 정하는 방식이라고 설명한다. 슬라이드에 따르면 이 방법은 16개의 size-based bucket을 두고, 100ms epoch마다 평균 I/O 시간의 절반 정도를 다음 sleep 시간으로 사용한다. oversleep을 줄이기 위한 일종의 안전 여유로 attenuation을 두는 셈이다. 변형으로는 평균 대신 최소값을 사용하거나, attenuation 비율을 달리하거나, epoch를 더 짧게 가져가는 방식도 있지만 기본 철학은 비슷하다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 구조를 이해하려면 Hybrid Polling이 “과거를 보고 미래를 추정하는 방식”이라는 점을 기억하면 된다. 최근 I/O가 대체로 20마이크로초에 끝났다면, 다음에는 그 절반인 10마이크로초 정도 sleep하고 일어나서 확인하면 적당하겠다고 가정하는 것이다. 너무 오래 자면 늦게 깨어 지연이 늘고, 너무 짧게 자면 아직 안 끝난 상태에서 깨서 CPU를 낭비하니, 과거 평균을 적당히 줄여서 쓰자는 생각이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 발상은 그럴듯하지만, DPAS 슬라이드는 여기에 두 가지 근본적 한계가 있다고 본다. 첫째, epoch 기반이기 때문에 변화에 느리다. workload가 갑자기 바뀌어 latency가 상승하거나 하락해도, 현재 epoch가 끝날 때까지는 그 변화를 반영하지 못한다. epoch를 10ms처럼 짧게 하면 반응이 조금 빨라질 수는 있지만, “다음 epoch까지 모른다”는 구조적 문제 자체는 사라지지 않는다. 둘째, 측정하는 값이 “실제 디바이스 시간”이 아니라 “전체 I/O 시간”이라는 점이 문제다. 여기에는 sleep을 너무 길게 잡아서 늦게 깨어난 시간도 포함된다. 즉, 디바이스가 정말 느려졌는지, 내가 늦게 일어났기 때문에 그렇게 보이는지를 구분하지 못한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "8. Latency Shelving: Hybrid Polling의 대표적 실패 모드"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드가 특히 강조하는 것이 latency shelving이다. 이것은 oversleep이 다시 더 큰 oversleep을 부르는 양의 되먹임 구조를 말한다. 예를 들어 어떤 epoch에서 sleep을 다소 길게 잡아 여러 I/O를 늦게 감지했다고 하자. 그러면 측정되는 I/O time은 실제 디바이스 처리 시간보다 더 길어진다. Hybrid Polling은 이 값을 보고 “최근 디바이스가 느려졌구나”라고 오해한다. 그 결과 다음 epoch에서는 sleep duration을 더 늘린다. 그러면 더 늦게 깨어나게 되고, 측정 시간은 더 늘어나며, 다시 더 긴 sleep으로 이어진다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Linux Hybrid Polling이 평균의 절반만 사용하도록 attenuation을 두는 이유도 이 문제를 완화하기 위해서다. 그러나 DPAS는 이것이 본질적 해결책은 아니라고 본다. 과거 전체 시간을 이용해 sleep을 조정하는 구조 자체가 oversleep과 device slowdown을 분리하지 못하므로, 어느 정도의 shelving은 피할 수 없다는 것이다. 결국 Hybrid Polling은 인터럽트와 폴링 사이의 타협점처럼 보이지만, 실제로는 “무엇을 측정하고 있는가”라는 근본 문제를 안고 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "9. PAS: 시간을 재지 말고 상태를 보자"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 지점에서 DPAS 논문은 PAS라는 아이디어를 제안한다. PAS의 핵심은 매우 흥미롭다. 기존 방법들은 다음 sleep 시간을 정하기 위해 “I/O가 몇 마이크로초 걸렸는가”를 측정하려 한다. 그러나 PAS는 그 질문 자체를 버린다. 시간 측정이 부정확한 원인이라면, 아예 시간을 측정하지 말자는 것이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS는 wake-up 이후 completion queue를 확인한 결과만으로 sleep 조절 신호를 얻는다. 깨어났는데 아직 I/O가 끝나지 않았다면, 이는 너무 일찍 깬 것이다. 이 경우를 UNDER라고 부른다. 반대로 깨어났더니 이미 I/O가 끝난 상태였다면, 이는 너무 늦게 깬 것이다. 이 경우를 OVER라고 부른다. PAS는 이 UNDER/OVER라는 이진 신호만 사용한다. 즉, “몇 마이크로초 늦었다” 같은 수치 정보를 버리고, “짧았는가 길었는가”만 보는 것이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 방식의 장점은 명확하다. 먼저 per-I/O 단위로 즉시 피드백을 얻으므로 epoch 기반 방법보다 훨씬 prompt하다. 둘째, 실제 디바이스 latency와 oversleep error를 섞어서 측정하지 않는다. 내가 늦게 깨어났다면 OVER로 분류되며, 이것은 “디바이스가 느려졌다”는 의미가 아니라 “내 sleep이 너무 길었다”는 의미로 직접 해석된다. 즉, PAS는 sleep 조절에 필요한 정보를 더 직접적으로 관찰한다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS는 마지막 두 번의 결과 쌍, 즉 UNDER/OVER 패턴을 보고 다음 sleep 조정 방향과 강도를 정한다. UNDER가 연속되면 너무 일찍 깨고 있으므로 sleep을 더 공격적으로 늘린다. OVER가 연속되면 너무 늦게 깨고 있으므로 sleep을 더 빠르게 줄인다. UNDER 뒤 OVER나 OVER 뒤 UNDER처럼 방향이 바뀌는 경우에는 지금 주변에서 진동하고 있다고 보고 조정을 완만하게 만든다. 이 구조는 마치 시간값을 추정하는 제어기가 아니라, 이진 피드백만으로 적정 지점을 찾아가는 적응형 제어기처럼 볼 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "10. PAS도 완벽하지 않은 이유"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그러나 PAS 역시 모든 상황을 해결하지는 못한다. DPAS 슬라이드가 말하는 핵심 문제는 heavy CPU contention에서 나타나는 timer failure다. PAS는 sleep을 hrtimer 같은 고해상도 타이머에 의존해 구현한다. 그런데 CPU가 매우 바쁘면, 타이머가 만료되었다고 해서 스레드가 즉시 실행된다는 보장은 없다. 운영체제 스케줄러가 그 스레드를 늦게 깨울 수도 있다. 즉, 사용자가 5마이크로초 후에 깨워 달라고 요청했어도 실제로는 훨씬 늦게 깨어날 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이런 상황에서는 PAS가 아무리 올바르게 작동해도 모든 wake-up이 OVER로 보인다. 왜냐하면 “내가 요청한 시간”보다 훨씬 늦게 스케줄러가 깨웠으니, 당연히 completion은 이미 끝나 있기 때문이다. PAS는 이를 보고 sleep을 계속 줄인다. 그런데 sleep을 줄여도 소용이 없다. 지연의 원인이 디바이스가 아니라 스케줄러이기 때문이다. 결국 PAS의 sleep 값은 거의 0에 수렴하고, 시스템은 사실상 busy-wait에 가까운 상태로 퇴화한다. 슬라이드는 이것을 timer failure라고 부른다. 즉, “타이머를 기반으로 한 하이브리드 전략이 더 이상 의미를 가지지 못하는 상태”다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "흥미로운 점은 DPAS가 이 실패를 단순한 문제로 보지 않고, 오히려 중요한 신호로 이용한다는 데 있다. PAS가 timer failure에 빠졌다는 것은 “현재 CPU가 과부하 상태라서, 타이머 기반 하이브리드 전략이 통하지 않는다”는 뜻이기 때문이다. 이것은 단순한 오차가 아니라, 시스템 상태를 알려주는 강력한 힌트가 된다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "11. 왜 하나의 방식으로는 해결할 수 없는가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드는 이를 “I/O completion trilemma”로 정리한다. 인터럽트는 CPU 효율이 좋지만 저지연 SSD에서는 고정 오버헤드가 뼈아프다. 고전적 폴링은 가장 빠르지만 CPU contention에 취약하고 전체 시스템 성능을 해칠 수 있다. 하이브리드 폴링은 절충이지만 부정확한 추적, latency shelving, 문맥 전환 오버헤드, timer failure 같은 한계를 가진다. 결국 단일한 completion method가 모든 상황에서 최적일 수 없다는 결론이 나온다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 결론은 매우 중요하다. 많은 시스템 문제는 “더 좋은 알고리즘 하나를 찾으면 된다”는 식으로 생각하기 쉽다. 하지만 여기서는 그런 접근이 통하지 않는다. workload의 queue depth가 다르고, CPU contention의 정도가 다르며, SSD 모델과 지연 특성도 다르고, 시스템 전체 부하도 계속 바뀐다. 그러므로 정답은 “최고의 한 방식”이 아니라, “상황에 따라 최적의 방식을 선택하는 체계”여야 한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "12. DPAS: 동적으로 모드를 바꾸자"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 문제의식 위에서 DPAS가 등장한다. DPAS는 Dynamic PAS의 약자로, 이름 그대로 PAS를 중심에 두되, 상황에 따라 classic polling, PAS, interrupts 사이를 전환하는 동적 모드 선택 기법이다. 슬라이드에 따르면 DPAS는 timer failure와 queue depth를 함께 사용해 현재 어떤 completion method가 적절한지를 판단한다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "먼저 queue depth는 중요한 힌트다. QD=1인 상황은 대체로 latency-sensitive한 동기 I/O에 가깝고, 이때는 polling의 이점이 크다. 반면 outstanding I/O가 여러 개 쌓이는 상황, 즉 QD가 임계값보다 커지는 상황은 throughput 지향이거나 부하가 커진 상황일 가능성이 높고, 이때는 인터럽트가 더 적합할 수 있다. 하지만 QD만으로는 충분하지 않다. 디바이스가 느려져서 큐가 쌓인 것인지, CPU가 바빠서 감지가 늦어진 것인지 구분할 수 없기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "여기서 timer failure가 중요한 역할을 한다. PAS가 sleep을 거의 0까지 줄였는데도 계속 OVER가 나온다면, 이는 디바이스 문제가 아니라 CPU overload에 가깝다는 신호다. 즉, “지금은 타이머 기반 하이브리드나 폴링이 먹히지 않는 환경”이라는 뜻이다. DPAS는 이 정보를 이용해 인터럽트로 전환한다. 반대로 contention이 사라지고, 큐가 가벼워지고, PAS가 다시 정상적으로 수렴할 수 있는 상태가 되면, 더 빠른 모드로 돌아갈 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드는 이를 classic polling, PAS(normal), PAS(overloaded), interrupts 사이의 전이도로 제시한다. 설명을 쉽게 바꾸면 이렇다. CPU가 넉넉하고 QD=1인 가벼운 지연 민감 I/O라면 classic polling이 가장 빠를 수 있다. 어느 정도 동적 조절이 필요하지만 여전히 하이브리드가 의미 있는 상황이라면 PAS를 사용한다. PAS가 timer failure를 통해 “지금은 내가 통하지 않는다”고 드러내면, interrupt 모드로 물러난다. 그리고 인터럽트 모드에서도 주기적으로 다시 PAS를 probe하여 상황이 나아졌는지 확인한다. 이렇게 해서 시스템은 한 가지 방식에 고정되지 않고, 매 순간 환경에 맞는 completion strategy를 선택한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "13. QD가 왜 중요한가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS를 이해하려면 queue depth의 의미를 한 번 더 명확히 해야 한다. QD는 동시에 outstanding 상태인 I/O의 개수다. QD=1은 하나를 보내고 그 하나가 끝나기를 기다리는 구조이며, 이는 전형적으로 latency-sensitive한 동기 I/O와 잘 연결된다. 이 경우에는 한 요청을 최대한 빨리 끝내는 것이 중요하므로, 폴링이나 PAS의 이점이 크다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "반면 QD가 커진다는 것은 여러 요청이 동시에 쌓이고 있다는 뜻이다. 이 상황에서는 개별 I/O 하나의 지연보다 전체 시스템 처리량과 CPU 효율이 더 중요해질 가능성이 높다. 또한 큐가 길다는 사실 자체가 이미 “지금은 바쁜 상태”를 암시한다. 물론 이것만으로 CPU가 바쁜지 디바이스가 바쁜지 구분할 수는 없다. 그래서 DPAS는 QD 하나만 보지 않고, timer failure와 함께 해석한다. 요컨대 QD는 workload의 성격을, timer failure는 CPU scheduler 환경을 알려주는 신호라고 볼 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "14. Linux block layer와의 연결"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "강의 자료와 연결해서 보면 DPAS의 위치도 이해할 수 있다. 저장장치 강의에서는 Linux block layer가 원래 하드디스크 시대에 맞춰 single queue 기반으로 발전했으나, NVMe 시대에는 multi-queue block layer로 재설계되었다고 설명한다. 소프트웨어 큐와 하드웨어 디스패치 큐를 분리하고, CPU별 큐를 도입하여 lock contention과 remote memory access 문제를 줄이려는 것이다. DPAS는 이러한 Linux block layer 내부에 구현되어, 애플리케이션 코드를 바꾸지 않고도 동기 I/O 경로에 새로운 completion strategy를 적용한다는 점을 강조한다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "슬라이드의 구현 설명에 따르면 DPAS는 별도의 dedicated polling thread나 전용 CPU를 요구하지 않는다. 각 스레드가 자신의 I/O를 직접 관리하며, block layer에 통합되어 모든 sync I/O 애플리케이션에 투명하게 적용된다. 이는 SPDK 같은 커널 바이패스 접근과 대조적이다. SPDK는 매우 빠를 수 있지만, 파일시스템, 보안, 범용 POSIX 생태계와의 통합이라는 측면에서 일반 시스템에는 부담이 크다. DPAS의 가치는 “커널 안에서, 기존 애플리케이션을 바꾸지 않고, 가능한 한 똑똑하게 completion method를 고르는 것”에 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "15. 왜 이 문제가 앞으로 더 중요해질까"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS 슬라이드는 Optane이 단종되었더라도 이 문제는 사라지지 않는다고 본다. Kioxia XL-Flash 같은 초저지연 계열, Z-NAND 계열, 그리고 더 빠른 차세대 저장/메모리 계층이 계속 등장하고 있기 때문이다. 디바이스가 빨라질수록 host-side overhead는 더 큰 병목이 된다. 이는 특정 한 제품군의 문제가 아니라, “빠른 비휘발성 저장장치 시대” 전체의 구조적 문제다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "또한 이 문제는 단순한 벤치마크 장난이 아니다. 동기 I/O가 오래된 유산처럼 보일 수 있지만, 실제로는 데이터베이스의 WAL, fsync, consensus log, 파일시스템 메타데이터 갱신 등 내구성과 정확성이 중요한 경로에서는 여전히 제거할 수 없는 핵심 패턴이다. 이런 경로는 대개 작고 짧은 I/O이며, 바로 그런 곳에서 몇 마이크로초의 오버헤드가 실제 시스템 성능에 큰 영향을 줄 수 있다. 따라서 I/O completion method를 어떻게 선택하느냐는 앞으로도 운영체제와 스토리지 시스템의 중요한 연구·개발 주제가 될 가능성이 높다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "16. 정리"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "지금까지의 내용을 한 문장으로 요약하면 이렇다. SSD가 빨라지면서 인터럽트 기반 I/O 완료의 고정 오버헤드가 병목으로 드러났고, 이를 피하기 위한 폴링은 CPU contention에서 무너지며, 그 사이의 절충인 Linux Hybrid Polling은 시간 추정의 부정확성과 latency shelving 같은 구조적 한계를 가진다. PAS는 시간을 직접 재지 않고 UNDER/OVER라는 이진 신호를 사용해 더 직접적이고 빠르게 sleep을 조절하는 방법을 제안했지만, CPU contention이 심한 환경에서는 timer failure로 인해 여전히 문제가 생긴다. DPAS는 여기서 한 걸음 더 나아가, timer failure와 queue depth를 함께 활용하여 classic polling, PAS, interrupts 사이를 동적으로 전환함으로써 “한 가지 completion method로는 모든 상황을 해결할 수 없다”는 현실을 시스템 설계로 받아들인다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 문제를 공부하는 데서 중요한 것은 단순히 인터럽트가 느리고 폴링이 빠르다는 식의 이분법을 외우는 것이 아니다. 진짜 핵심은 저장장치 성능이 바뀌면 운영체제의 어떤 층위가 병목으로 드러나는지, 하드웨어와 소프트웨어의 상대적 속도 차이가 시스템 설계를 어떻게 뒤흔드는지, 그리고 범용 운영체제에서는 개별 경로의 최적화와 전체 시스템의 공존 가능성 사이에서 어떤 균형을 잡아야 하는지를 이해하는 데 있다. DPAS는 바로 그 균형점을 찾으려는 시도이며, SSD 시대의 I/O 완료 방식이 더 이상 단순한 구현 세부사항이 아니라 시스템 전체의 구조적 설계 문제임을 잘 보여주는 사례라고 할 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "17. No CPU Contention과 Heavy CPU Contention을 나누어 보아야 하는 이유"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS를 이해할 때 가장 중요한 관점 중 하나는, I/O 완료 방식의 우열이 절대적이지 않고 시스템 상태에 따라 뒤집힌다는 사실이다. 특히 CPU contention이 없는 상황과 CPU contention이 심한 상황은 완전히 다른 세계라고 생각하는 편이 낫다. 같은 SSD, 같은 NVMe 드라이버, 같은 운영체제를 쓰더라도 CPU가 얼마나 바쁜가에 따라 polling, hybrid polling, interrupt의 장단점이 정반대로 드러날 수 있기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "먼저 no CPU contention 상황을 생각해 보자. 이는 대략적으로 말해 스레드 수가 CPU 코어 수를 넘지 않고, 해당 I/O를 기다리는 스레드가 자신이 실행될 CPU 시간을 비교적 안정적으로 확보할 수 있는 상태를 뜻한다. 여기서는 classic polling이 매우 강력하다. completion queue를 계속 보고 있으므로 I/O가 끝나는 즉시 감지할 수 있고, 스케줄러 wakeup이나 인터럽트 처리 같은 우회 경로를 거치지 않아도 된다. 바로 이 환경에서 classic polling은 가장 낮은 latency를 제공한다. 반면 hybrid polling은 직관적으로는 절충안처럼 보이지만, 이 경우에는 오히려 구조적 불리함이 드러난다. no contention 환경에서는 굳이 sleep했다가 다시 깨어날 필요가 없는데도, hybrid polling은 매 I/O마다 sleep과 wakeup을 반복한다. 이 과정에서 hrtimer 설정, sleep 진입, 깨어난 뒤의 재실행, 캐시와 워킹셋 복구 같은 오버헤드가 들어간다. 결국 디바이스가 아주 빠른 상황에서는 이 sleep/wakeup 주기가 순수한 손실로 작용할 수 있다. 이 때문에 no contention 환경에서는 “hybrid polling은 classic polling보다 CPU는 덜 먹을 수 있지만, latency와 IOPS에서는 분명한 손해를 본다”는 평가가 가능하다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "반대로 heavy CPU contention 상황은 완전히 다르다. 이 경우 polling 스레드는 더 이상 “빠르게 completion을 감지하는 감시자”가 아니라, 다른 스레드들과 CPU를 놓고 싸우는 경쟁자 중 하나가 된다. classic polling은 runnable 상태를 계속 유지하며 CPU를 요구하므로, 시스템 전체 관점에서는 contention을 더 악화시킬 수 있다. 어떤 코어에서 polling 스레드가 CPU를 붙잡고 있으면, 다른 작업들이 그 코어를 쓰기 어려워지고, 다른 작업이 많을수록 스케줄러는 더 자주 개입해야 하며, 캐시 locality는 더 쉽게 깨진다. 즉 polling이 빠른 이유였던 “계속 깨어 있어서 completion을 곧바로 잡는다”는 성질이, contention 환경에서는 오히려 전체 시스템에 부담을 주는 요인으로 바뀐다. interrupt는 이 지점에서 장점을 되찾는다. CPU를 점유하지 않고 I/O 완료 시점에만 처리 경로를 탄다는 특성 덕분에, CPU가 바쁜 상황에서는 polling보다 더 안정적일 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Hybrid polling은 heavy contention에서도 문제를 드러낸다. 겉으로 보면 sleep을 하므로 classic polling보다 contention에 덜 취약해 보여야 한다. 그러나 실제로는 hrtimer가 만료되더라도 스레드가 즉시 실행된다는 보장이 없다. 스케줄러가 이미 다른 runnable task들로 바쁘다면, hybrid polling 스레드는 원래 의도보다 훨씬 늦게 깨어난다. 이때 hybrid polling은 “내가 너무 오래 잤다”는 결과만 관찰할 뿐, 왜 늦게 깼는지를 모른다. 결국 sleep을 더 줄이거나, 잘못된 평균을 누적하여 더 엉뚱한 방향으로 학습할 수 있다. 그래서 heavy contention에서는 hybrid polling이 classic polling보다도, 나아가 interrupt보다도 나쁜 선택이 될 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 비교가 중요한 이유는 단순하다. I/O completion 문제는 “가장 빠른 방법 하나를 고르면 끝나는 문제”가 아니기 때문이다. no contention에서는 classic polling이 이상적일 수 있지만, 같은 코드를 CPU가 빡빡한 환경에서 돌리면 갑자기 시스템을 망가뜨리는 선택이 될 수 있다. 반대로 interrupt는 단일 스레드 저지연 실험에서는 느려 보이지만, 여러 스레드와 여러 서비스가 공존하는 실제 서버 환경에서는 전체 시스템의 안정성을 지켜주는 선택일 수 있다. DPAS는 바로 이 조건 의존성을 설계의 출발점으로 받아들인다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "18. High-Resolution Timer와 timer failure를 정확히 이해하기"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS와 DPAS를 공부하다 보면 timer failure라는 표현이 자주 등장하는데, 이를 단순히 “타이머가 부정확하다” 정도로 이해하면 핵심을 놓치게 된다. 여기서 중요한 것은 하드웨어 타이머 장치 자체의 정밀도가 아니라, “정해진 시각에 해당 스레드가 실제로 실행될 수 있는가”이다. Linux에서 hybrid polling이나 PAS류 기법은 보통 hrtimer, 즉 high-resolution timer를 이용해 마이크로초 수준의 sleep을 구현한다. 이 타이머는 일반적인 tick 기반 타이머보다 훨씬 정밀하며, 매우 짧은 지연을 다루는 데 적합하다. 문제는 hrtimer가 만료되었다는 사실과, 그 타이머를 기다리던 스레드가 CPU를 얻어 실제로 코드를 실행한다는 사실 사이에는 간극이 존재한다는 점이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "CPU에 여유가 충분한 상황을 생각해 보자. 스레드가 10마이크로초 동안 sleep하고 나서 completion queue를 확인하기로 했고, 디바이스도 대략 그 무렵 응답한다고 하자. 이때는 hrtimer 만료와 스레드 재실행 사이의 간격이 매우 작을 수 있다. 그래서 “10마이크로초 자고 일어나 확인한다”는 전략이 의미를 가진다. 하지만 CPU contention이 심한 상황에서는 사정이 달라진다. hrtimer는 여전히 정확하게 만료될 수 있다. 문제는 그 시점에 해당 스레드를 당장 실행할 CPU가 없을 수 있다는 것이다. 런큐에는 이미 다른 runnable task가 가득하고, 스케줄러는 그 사이에서 우선순위와 fairness를 따져야 하며, 결과적으로 스레드는 원래 의도한 시각보다 훨씬 늦게 깨어난다. 이 경우 “타이머가 틀렸다”기보다는 “타이머가 알려준 시점에 실행될 기회를 얻지 못했다”고 보는 편이 정확하다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS는 시간을 직접 측정하지 않고, 깨어난 뒤 completion queue를 확인해 UNDER 또는 OVER를 판단한다. 따라서 CPU contention 상황에서 스레드가 늦게 깨어나면, PAS 입장에서는 계속 OVER가 발생한다. 문제는 이 OVER가 디바이스가 느려서 생긴 것인지, 아니면 스케줄러가 스레드를 늦게 깨워서 생긴 것인지 구분할 수 없다는 점이다. PAS는 자연스럽게 “sleep이 너무 길었나 보다”라고 해석하고 sleep을 더 줄인다. 그런데 sleep을 줄여도 스케줄러 지연은 사라지지 않는다. 결국 PAS의 sleep duration은 점점 0에 가까워지고, 사실상 “자지 않고 바로 polling하는 것과 다를 바 없는 상태”에 도달한다. 슬라이드에서 말하는 timer failure는 바로 이 현상이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이제 왜 DPAS가 timer failure를 중요한 신호로 보는지가 분명해진다. 만약 디바이스 자체가 느려진 것이라면, sleep을 줄이면 어느 시점에서는 다시 UNDER가 나오거나 적어도 PAS가 균형점을 찾을 수 있어야 한다. 그러나 CPU contention 때문에 스케줄러가 계속 늦게 깨우는 상황이라면, sleep을 아무리 줄여도 결과는 OVER 쪽으로 기울 수밖에 없다. 즉 “sleep을 줄였는데도 계속 늦게 깬다”는 사실은, 문제의 원인이 디바이스 latency가 아니라 CPU scheduling 환경이라는 뜻이다. DPAS는 이 관찰을 이용해, PAS가 timer failure에 도달하면 더 이상 hybrid 계열로 버티지 말고 interrupt로 물러나야 한다고 판단한다. 그러므로 DPAS가 보는 것은 “타이머의 정확도”가 아니라, timer failure라는 결과를 통해 드러나는 CPU overload의 징후라고 이해하는 것이 정확하다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "19. PAS의 조정 규칙을 제어 관점에서 읽기"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS를 단순히 UNDER면 늘리고 OVER면 줄이는 알고리즘으로 이해하면 절반만 이해한 셈이다. PAS의 진짜 핵심은 마지막 두 번의 결과 쌍을 이용해 조정의 방향뿐 아니라 강도까지 바꾼다는 데 있다. 다시 말해, PAS는 단순한 if 문 하나가 아니라 “최근 변화의 방향을 보고 얼마나 공격적으로 수정할지를 결정하는 작은 제어기”에 가깝다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "먼저 UNDER가 연속으로 두 번 나온 상황을 보자. 이는 깨어날 때마다 아직 I/O가 끝나지 않았다는 뜻이다. 즉 sleep이 계속 부족하다는 명백한 신호다. 이 경우 PAS는 sleep을 늘리되, 단순히 상수만큼 천천히 늘리지 않는다. 그렇게 하면 적정 지점에 도달하기까지 너무 오래 걸리고, 그동안 CPU는 의미 없는 poll을 반복해야 한다. 따라서 UNDER-UNDER는 “훨씬 더 자도 된다”는 강한 피드백으로 해석되어, sleep 증가 폭을 더 공격적으로 키우는 쪽으로 동작한다. OVER-OVER도 완전히 대칭적이다. 이 경우는 깨어날 때마다 이미 completion이 끝난 상태를 본다는 뜻이므로 sleep이 계속 과하다는 의미다. 단순히 조금씩만 줄이면 oversleep 상태가 오래 지속되므로, PAS는 이때도 감소 폭을 키워 빠르게 적정 지점으로 돌아가려 한다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "흥미로운 것은 UNDER-OVER나 OVER-UNDER처럼 방향이 바뀌는 순간이다. 예를 들어 UNDER였다가 바로 다음 I/O에서 OVER가 나왔다는 것은, 직전에는 너무 짧게 잤고 이번에는 너무 길게 잤다는 뜻이다. 즉 적정 지점 근처를 지나쳤다는 의미로 해석할 수 있다. 이 상황에서 OVER-OVER 때처럼 감소를 더 세게 해 버리면 진동이 커진다. 그래서 PAS는 방향 전환이 관찰되면 조정의 공격성을 낮추고, 아주 조금만 반대 방향으로 이동한다. OVER 뒤 UNDER도 같은 논리다. 방금 전까지는 길었는데 이번에는 짧았다는 것은 역시 최적점 주변에서 오버슈팅하고 있다는 뜻이므로, 큰 폭으로 다시 키우지 않고 미세 조정하는 편이 낫다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 구조를 보면 PAS는 “얼마나 틀렸는지”를 수치로 측정하지 않으면서도, “지금 어느 방향으로 얼마나 세게 움직여야 하는지”를 꽤 영리하게 결정한다는 것을 알 수 있다. UNDER-UNDER와 OVER-OVER에서는 같은 방향 오류가 반복되므로 공격적으로 수렴하고, UNDER-OVER와 OVER-UNDER에서는 최적점 근처에서 방향이 바뀌었으므로 감쇠된 조정으로 진동을 줄인다. 이는 하이브리드 폴링에서 흔히 문제가 되는 느린 추적과 oversleep 누적을 줄이는 데 도움이 된다. 물론 step 크기를 무한히 키우면 오히려 시스템이 불안정해질 수 있으므로, 실제 구현에서는 민감도 상한을 두거나 증가율을 제한하는 장치가 필요하다. DPAS 슬라이드의 백업 페이지가 sensitivity parameters를 따로 논하는 것도 이런 이유다. 중요한 것은 PAS가 단순한 상수 조정이 아니라, 연속된 관측 결과에 따라 조정 세기를 바꾸는 adaptive 제어 방식이라는 점이다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "20. Linux Hybrid Polling과 PAS의 차이를 더 엄밀하게 비교하기"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Linux Hybrid Polling과 PAS는 모두 “조금 자고 나서 completion queue를 확인한다”는 겉모습을 공유하지만, 내부 철학은 상당히 다르다. Linux Hybrid Polling은 과거의 I/O time 통계를 저장하고, 그 평균이나 최소값 같은 수치를 바탕으로 다음 sleep duration을 추정한다. 이 방식은 본질적으로 예측 기반이다. 이전 I/O가 어땠는지를 측정하고, 그 결과를 바탕으로 다음 I/O도 비슷할 것이라고 가정하는 것이다. 이 구조의 장점은 구현이 직관적이고, 충분히 안정적인 workload에서는 잘 작동할 수 있다는 점이다. 하지만 단점은 이미 살펴본 것처럼, 과거 평균이 oversleep과 device slowdown을 분리하지 못하고, epoch 구조 때문에 반응 속도가 느리며, latency shelving이라는 양의 되먹임 문제를 품고 있다는 것이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS는 여기서 한 발 더 나아가, 시간값 자체를 버린다. 즉 “몇 마이크로초 걸렸는가”를 묻지 않고, “내가 너무 일찍 깼는가, 너무 늦게 깼는가”만 본다. 이 차이는 작아 보이지만 본질적이다. Linux Hybrid Polling은 시간을 재서 그 시간에 맞추려는 방식이고, PAS는 결과를 관찰하며 적정점을 향해 움직이는 방식이다. 전자가 측정 오차에 민감하고 과거 평균에 끌려가기 쉬운 반면, 후자는 per-I/O 피드백 덕분에 abrupt change를 더 빨리 따라갈 수 있다. 또한 PAS에서는 oversleep이 발생하더라도 그것이 “긴 I/O time”으로 섞여 들어가지 않고, 곧바로 OVER라는 방향 정보로 환원된다. 그래서 Linux Hybrid Polling보다 더 직접적이고, 더 prompt하며, latency shelving 문제에 훨씬 강하다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그렇다고 PAS가 Linux Hybrid Polling을 완전히 압도하는 만능 해법은 아니다. Linux Hybrid Polling은 적어도 CPU contention이 아주 극단적이지 않은 상황에서는, 문맥 전환 비용을 감수하면서 CPU 사용량을 절제하는 절충안으로 볼 수 있다. 반면 PAS는 timer failure가 발생하면 결국 classic polling 쪽으로 붕괴할 수 있다. 이 차이는 “무엇을 얼마나 잘 측정하는가”의 문제가 아니라, 하이브리드 계열 기법이 결국 sleep과 wakeup에 의존한다는 구조적 한계에서 나온다. 그래서 DPAS는 PAS를 최종 종착점으로 삼지 않고, PAS를 더 큰 동적 전환 체계의 일부로 위치시킨다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "21. DPAS의 모드 전환을 상태 기계처럼 이해하기"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS를 처음 볼 때 많은 사람이 가장 헷갈려하는 부분은 “도대체 언제 interrupt로 갔다가, 언제 PAS로 돌아오고, 언제 classic polling으로 바뀌는가”이다. 이를 가장 쉽게 이해하는 방법은 DPAS를 단순한 알고리즘이 아니라 작은 상태 기계로 생각하는 것이다. 이 상태 기계에서 핵심 역할을 하는 것은 PAS다. 중요한 점은 PAS가 항상 최종 운영 모드라는 뜻은 아니라는 것이다. 오히려 PAS는 “현재 상태를 가장 잘 드러내는 탐침(probe)”에 가깝다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS는 일정 수의 I/O를 PAS로 실행하면서 현재 시스템 상태를 관찰한다. 이 구간이 슬라이드의 NPAS window에 해당한다. 여기서 PAS가 정상적으로 수렴하고, queue depth도 낮으며, timer failure 징후가 없다면, 시스템은 지금 no contention에 가까운 가벼운 지연 민감 상태라고 볼 수 있다. 이때는 classic polling이 가장 빠를 가능성이 높다. 그래서 DPAS는 일정 수의 I/O를 classic polling 모드로 수행한다. 이 구간이 NCP window다. 그러나 classic polling은 CPU를 독점하면서 전체 contention 상황을 가릴 수 있다. 즉 classic polling 상태를 오래 유지하면 “겉으로는 잘 도는 것 같지만 실제로는 다른 작업을 굶기고 있는” 상황이 생길 수 있다. 그래서 DPAS는 classic polling을 무기한 유지하지 않고, 일정 개수의 I/O가 끝나면 다시 PAS probing 단계로 돌아간다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Interrupt도 마찬가지다. PAS probing 중 queue depth가 높게 나오거나, timer failure를 통해 CPU overload 징후가 보이면, DPAS는 “지금은 polling 계열보다 interrupt가 낫다”고 판단한다. 그래서 일정 수의 I/O를 interrupt 모드로 수행한다. 이것이 NINT window다. 하지만 interrupt 역시 영구히 유지하지 않는다. 시간이 지나면 CPU contention이 줄어들 수도 있고, workload가 다시 QD=1 위주의 latency-sensitive한 형태로 돌아갈 수도 있기 때문이다. 따라서 DPAS는 interrupt 모드에 머무는 동안에도 주기적으로 다시 PAS probing 단계로 복귀하여 상황이 바뀌었는지 확인한다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "요약하면 DPAS는 PAS probing을 통해 상태를 읽고, 그 결과에 따라 classic polling 또는 interrupt로 잠시 기울었다가, 다시 probing으로 돌아오는 순환 구조를 가진다. 이것은 단지 구현의 편의가 아니라, “하나의 모드를 영구히 고정할 수 없다”는 철학의 직접적 표현이다. classic polling은 빠르지만 진짜 contention을 가릴 수 있고, interrupt는 안정적이지만 latency 최적화 기회를 놓칠 수 있으며, PAS는 관찰에는 뛰어나지만 timer failure 상황에서는 최적의 운영 모드가 아니다. 그래서 DPAS는 세 방식을 계층적으로 섞어 사용한다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "22. QD와 timer failure는 무엇을 각각 알려주는가"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS를 이해할 때 queue depth와 timer failure를 하나의 기준처럼 섞어 생각하면 쉽게 혼란스러워진다. 사실 이 둘은 서로 다른 종류의 정보를 제공한다. queue depth는 주로 workload의 형태를 알려준다. outstanding I/O가 거의 없고 QD=1에 가까운 상태라면, 이는 한 요청의 latency가 매우 중요한 구조일 가능성이 높다. 반대로 QD가 계속 높다면, 여러 I/O가 병렬로 진행되는 throughput 지향 상황이거나, 시스템 어디선가 병목이 생겨 요청이 쌓이고 있다는 뜻일 수 있다. 다시 말해 QD는 “지금 이 workload가 어떤 성격을 띠는가”를 보여주는 신호다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "반면 timer failure는 CPU scheduler 환경을 보여준다. PAS가 sleep을 줄여도 계속 OVER가 나오고, 결국 sleep이 사실상 0으로 내려간다면, 이는 디바이스 latency가 아니라 CPU contention 때문에 정시에 깨어나지 못하는 상황일 가능성이 크다. 즉 timer failure는 “현재 CPU가 hybrid/polling 계열을 감당할 만큼 여유로운가”를 보여준다. 요약하면 QD는 workload signal이고, timer failure는 execution environment signal이라고 볼 수 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 둘을 함께 써야 하는 이유도 여기에 있다. QD만 보면 CPU contention과 device slowdown을 구분하기 어렵다. 큐가 길어졌다는 사실만으로는, SSD가 느려졌는지, 다른 스레드가 많아 completion 처리가 늦어진 것인지 알 수 없다. 반대로 timer failure만 봐서는 현재 workload가 정말로 polling에 적합한 지연 민감 패턴인지 알 수 없다. DPAS는 QD를 통해 “어떤 방식이 이 workload에 이론적으로 맞는가”를 보고, timer failure를 통해 “그 방식을 현재 CPU 환경이 실제로 감당할 수 있는가”를 본다. 이 두 축을 함께 고려하기 때문에, DPAS는 단순한 heuristic 이상으로 설득력을 가진다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "23. Multi-Queue NVMe 환경에서 completion 문제를 다시 보기"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 시점에서 저장장치 강의의 NVMe multi-queue 구조와 다시 연결해 보면, 왜 이 completion 문제의 난이도가 더 높아졌는지도 이해할 수 있다. NVMe는 기본적으로 submission queue와 completion queue를 다수 둘 수 있고, Linux block layer 역시 blk-mq를 통해 CPU별 소프트웨어 큐와 하드웨어 디스패치 큐를 매칭하려 한다. 이는 lock contention과 remote memory access를 줄이고, 각 CPU가 자기 로컬 큐를 통해 I/O를 밀어 넣을 수 있도록 하기 위한 설계다. 이런 구조에서는 예전보다 submission path도 빨라지고, completion path도 더 세분화된다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "하지만 바로 그렇기 때문에 completion method의 선택이 더 중요해진다. 큐 자체는 많아졌고 디바이스 병렬성도 커졌는데, 완료 처리를 여전히 비싼 interrupt 경로만으로 하면 그 이득이 상쇄될 수 있다. 반대로 모든 큐에서 무조건 polling을 해 버리면, CPU 코어 수가 많을수록 여러 polling loop가 동시에 돌면서 시스템 전체를 압박할 수 있다. Linux block layer가 single queue에서 multi-queue로 바뀌었다는 사실은 단순히 submission scalability의 개선만이 아니라, completion 전략 역시 더 정교해야 함을 뜻한다. DPAS가 per-core bucket, 작은 상태 정보, block layer 통합 구조를 강조하는 이유도 바로 이 multi-queue 시대의 요구와 맞닿아 있다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "또한 NVMe의 queue-per-core 철학은 “각 CPU가 자기 큐를 다룬다”는 장점을 주지만, 동시에 각 코어가 어떤 completion method를 선택할지도 더 세밀하게 관리할 필요를 낳는다. 슬라이드의 백업 설명처럼, DPAS는 코어별로 다른 선택을 할 수 있다. 어떤 코어는 interrupt가 더 적합하고, 어떤 코어는 PAS나 classic polling이 더 유리할 수 있다. 이는 단일한 글로벌 정책보다 훨씬 현실적이다. 실제 서버에서는 모든 코어가 동일한 부하를 받지 않기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "24. 커널 바이패스와 비교했을 때 DPAS의 위치"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 글을 읽다 보면 자연스럽게 “이 정도로 커널 completion path가 문제라면, 그냥 SPDK처럼 커널을 우회하면 되는 것 아닌가”라는 질문이 떠오를 수 있다. 실제로 초저지연 NVMe 연구와 산업 적용에서는 커널 바이패스가 자주 언급된다. 사용자 공간에서 NVMe 큐를 직접 다루고, 전용 코어를 붙여 polling을 수행하면 매우 낮은 지연을 얻을 수 있다. 그러나 이는 범용 운영체제 환경과는 전혀 다른 타협을 요구한다. 파일시스템을 우회해야 하고, huge page, 전용 코어, 별도의 메모리 관리, 권한 모델까지 감수해야 하며, 일반적인 POSIX 애플리케이션은 그대로 재사용하기 어렵다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DPAS의 흥미로운 점은 “커널 안에서 어디까지 갈 수 있는가”를 탐구한다는 데 있다. 즉 POSIX 애플리케이션, 일반적인 파일시스템, 일반적인 동기 I/O 경로를 유지하면서도, completion method만 더 똑똑하게 고르자는 것이다. 이 접근은 SPDK보다 절대 latency가 더 낮다고 장담할 수는 없지만, 훨씬 넓은 적용 범위를 가진다. 대부분의 데이터베이스, 스토리지 서비스, 일반 서버 소프트웨어는 여전히 커널 I/O 경로 위에서 동작한다. 그런 현실을 고려하면 DPAS는 “가장 빠른 전용 길”을 만드는 프로젝트라기보다, “모두가 쓰는 일반 도로를 더 영리하게 운영하는 프로젝트”라고 보는 편이 맞다."
+          }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "25. 맺음말"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "지금까지 살펴본 내용을 하나의 흐름으로 다시 정리해 보자. SSD와 NVMe가 빠르게 발전하면서, 과거 하드디스크 시대에는 큰 문제가 아니던 소프트웨어 오버헤드가 전면으로 드러났다. 특히 I/O 완료를 어떻게 감지하고 처리할 것인지는 이제 몇 마이크로초 단위의 성능을 좌우하는 핵심 설계 문제가 되었다. 인터럽트는 CPU 친화적이지만, 디바이스가 빨라질수록 고정 오버헤드의 부담이 커진다. classic polling은 completion을 가장 빨리 잡을 수 있지만, CPU contention이 생기면 시스템 전체를 무너뜨릴 수 있다. Linux Hybrid Polling은 그 사이의 절충을 시도했지만, epoch 기반 추정, oversleep과 device latency의 혼동, latency shelving, sleep/wakeup 자체의 오버헤드라는 구조적 한계를 가진다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "PAS는 시간을 직접 재는 대신 UNDER와 OVER라는 이진 신호를 사용해, 더 prompt하고 더 직접적으로 sleep을 조정하는 길을 보여 주었다. 그러나 PAS 역시 CPU contention이 심한 환경에서는 timer failure에 빠질 수 있다. 여기서 DPAS의 관점 전환이 중요하다. timer failure를 단순한 실패가 아니라 CPU overload의 신호로 재해석하고, queue depth와 결합해 classic polling, PAS, interrupt 사이를 동적으로 오가게 만든 것이다. 이는 특정 completion method 하나가 절대적으로 우월하다는 환상을 버리고, 시스템이 처한 순간순간의 조건에 맞게 최적 전략을 고르려는 접근이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "결국 이 글에서 가장 중요하게 남겨야 할 메시지는, 저장장치 시스템의 성능 문제는 더 이상 SSD 내부나 인터페이스 규격만의 문제가 아니라는 점이다. NVMe queue 구조, Linux block layer, scheduler, interrupt path, polling loop, CPU contention, timer semantics가 모두 얽혀 있다. 디바이스가 빨라질수록, 시스템은 더 이상 “그냥 끝나면 인터럽트 한 번 받자” 수준의 단순한 사고로는 최적화되지 않는다. DPAS는 이 복잡한 상호작용을 드러내는 좋은 사례이며, 앞으로 더 빠른 저장장치와 메모리 계층이 등장할수록 이런 종류의 문제는 오히려 더 자주, 더 본질적으로 등장할 가능성이 높다. 저장장치 성능을 진지하게 이해하고 싶다면, 이제는 media 내부 구조만이 아니라 completion path 전체를 시스템적인 시각에서 바라봐야 한다."
+          }
+        ]
+      }
+    ]
+  }
+}
