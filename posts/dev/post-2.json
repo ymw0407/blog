@@ -295,8 +295,8 @@
       {
         "type": "image",
         "attrs": {
-          "src": "https://chatgpt.com/backend-api/estuary/content?id=file_00000000e2107206a9b388012c8a0550&ts=493912&p=fs&cid=1&sig=64209f36f86c22c43f0585fa6138f9f7841d554f3a58fe25a4efde742598883e&v=0",
-          "alt": "생성된 이미지",
+          "src": "media/assets/posts/dev/post-2/1778084918187-debate-vs-collab.png",
+          "alt": "debate-vs-collab.png",
           "title": null,
           "width": 91,
           "align": "center",
