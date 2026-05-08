@@ -9,20 +9,14 @@
     "type": "doc",
     "content": [
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/ai-expo-ticket.jpg",
           "alt": "AI Expo 입장권 사진",
           "title": null,
-          "width": 100,
+          "width": 33,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -57,20 +51,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/expo-aisle.jpg",
           "alt": "전시장 통로와 부스 풍경",
           "title": null,
-          "width": 100,
+          "width": 38,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -109,20 +97,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/deepl-booth.jpg",
           "alt": "DeepL 부스 사진",
           "title": null,
-          "width": 100,
+          "width": 25,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -248,20 +230,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/backend-ai-booth.jpg",
           "alt": "Backend.AI / Lablup 부스 사진",
           "title": null,
-          "width": 100,
+          "width": 33,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -400,20 +376,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/flow-booth.jpg",
           "alt": "Flow 부스 사진",
           "title": null,
-          "width": 100,
+          "width": 28,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -552,20 +522,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/dsng-seminar.jpg",
           "alt": "디에스엔지 세미나 사진",
           "title": null,
-          "width": 100,
+          "width": 50,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -631,20 +595,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/dsng-gpu-scheduler.jpg",
           "alt": "디에스엔지 GPU 스케줄러 세션 슬라이드",
           "title": null,
-          "width": 100,
+          "width": 50,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
@@ -941,26 +899,14 @@
         ]
       },
       {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
-        }
-      },
-      {
         "type": "image",
         "attrs": {
           "src": "media/assets/posts/dev/ai-expo-2026/physical-ai-robot.jpg",
           "alt": "전시장에서 본 휴머노이드 로봇",
           "title": null,
-          "width": 100,
+          "width": 33,
           "align": "center",
-          "x": null
-        }
-      },
-      {
-        "type": "paragraph",
-        "attrs": {
-          "textAlign": null
+          "x": 0
         }
       },
       {
@@ -969,9 +915,9 @@
           "src": "media/assets/posts/dev/ai-expo-2026/kb-genon-booth.jpg",
           "alt": "KB금융그룹 / GENON 부스의 로봇 데모",
           "title": null,
-          "width": 100,
+          "width": 33,
           "align": "center",
-          "x": null
+          "x": 0
         }
       },
       {
