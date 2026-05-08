@@ -17,7 +17,7 @@
       {
         "type": "image",
         "attrs": {
-          "src": "./images/ai-expo-ticket.jpg",
+          "src": "media/assets/posts/dev/ai-expo-2026/ai-expo-ticket.jpg",
           "alt": "AI Expo 입장권 사진",
           "title": null,
           "width": 100,
@@ -55,6 +55,23 @@
             "text": "기업 수가 꽤 많았기 때문에 모든 부스를 다 보기보다는, 내가 기존에 알고 있거나 실제로 사용해본 적 있는 기업들을 중심으로 둘러보기로 했다."
           }
         ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/ai-expo-2026/expo-aisle.jpg",
+          "alt": "전시장 통로와 부스 풍경",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
       },
       {
         "type": "paragraph",
@@ -100,7 +117,7 @@
       {
         "type": "image",
         "attrs": {
-          "src": "./images/deepl-booth.jpg",
+          "src": "media/assets/posts/dev/ai-expo-2026/deepl-booth.jpg",
           "alt": "DeepL 부스 사진",
           "title": null,
           "width": 100,
@@ -239,7 +256,7 @@
       {
         "type": "image",
         "attrs": {
-          "src": "./images/backend-ai-booth.jpg",
+          "src": "media/assets/posts/dev/ai-expo-2026/backend-ai-booth.jpg",
           "alt": "Backend.AI / Lablup 부스 사진",
           "title": null,
           "width": 100,
@@ -391,7 +408,7 @@
       {
         "type": "image",
         "attrs": {
-          "src": "./images/flow-booth.jpg",
+          "src": "media/assets/posts/dev/ai-expo-2026/flow-booth.jpg",
           "alt": "Flow 부스 사진",
           "title": null,
           "width": 100,
@@ -543,7 +560,7 @@
       {
         "type": "image",
         "attrs": {
-          "src": "./images/dsng-seminar.jpg",
+          "src": "media/assets/posts/dev/ai-expo-2026/dsng-seminar.jpg",
           "alt": "디에스엔지 세미나 사진",
           "title": null,
           "width": 100,
@@ -612,6 +629,23 @@
             "text": "GPU, 서버, 스토리지, 네트워크, 클라우드 환경, 운영 플랫폼 등 여러 계층이 함께 필요하다."
           }
         ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/ai-expo-2026/dsng-gpu-scheduler.jpg",
+          "alt": "디에스엔지 GPU 스케줄러 세션 슬라이드",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
       },
       {
         "type": "paragraph",
@@ -905,6 +939,40 @@
             "text": "로봇, 제조, 장비, 센서, 자동화와 연결된 AI들이 점점 더 많이 보였다."
           }
         ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/ai-expo-2026/physical-ai-robot.jpg",
+          "alt": "전시장에서 본 휴머노이드 로봇",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/ai-expo-2026/kb-genon-booth.jpg",
+          "alt": "KB금융그룹 / GENON 부스의 로봇 데모",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
       },
       {
         "type": "paragraph",
