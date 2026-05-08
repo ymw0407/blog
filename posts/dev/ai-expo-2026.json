@@ -1,0 +1,1098 @@
+{
+  "title": "AI Expo 2026 방문기: 기술보다 시장의 방향이 더 잘 보였던 전시회",
+  "datetime": "2026-05-08T05:39:48.157Z",
+  "date": "2026-05-08",
+  "category": "dev",
+  "tags": [],
+  "summary": "",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./images/ai-expo-ticket.jpg",
+          "alt": "AI Expo 입장권 사진",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "5월 7일 오전 10시, AI Expo가 열리자마자 바로 입장했다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "전시장에 들어가자마자 먼저 참여 기업 목록을 훑어봤다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "기업 수가 꽤 많았기 때문에 모든 부스를 다 보기보다는, 내가 기존에 알고 있거나 실제로 사용해본 적 있는 기업들을 중심으로 둘러보기로 했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이번 방문에서 가장 궁금했던 것은 단순히 “어떤 AI 기술이 나왔는가”라기보다는,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "요즘 기업들이 AI를 어떤 방식으로 설명하고 있고, 실제 시장에서는 어떤 방향으로 AI가 소비되고 있는가였다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "가장 먼저 찾은 DeepL 부스"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./images/deepl-booth.jpg",
+          "alt": "DeepL 부스 사진",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "가장 먼저 방문한 곳은 DeepL을 소개하고 있던 솔트룩스이노베이션 부스였다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "DeepL은 평소에도 자주 사용하는 번역 서비스다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "개인적으로는 여러 번역기 중에서도 문장이 꽤 자연스럽게 나오는 편이라고 느껴서, 기술적으로나 서비스적으로 어떤 이야기를 들을 수 있을지 기대했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "다만 현장에서 들은 설명은 개인 사용자 입장의 번역기보다는 기업용 솔루션에 가까웠다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "기업에서 번역 업무를 어떻게 효율화할 수 있는지,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "엔터프라이즈 환경에서 어떤 식으로 도입할 수 있는지에 대한 설명이 중심이었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "개인적으로는 조금 더 모델이나 번역 품질, 사용자 경험과 관련된 이야기를 기대했지만, 부스의 방향은 확실히 B2B에 가까웠다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이때부터 약간 느껴졌다."
+          }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "attrs": {
+          "icon": "info"
+        },
+        "content": [
+          {
+            "type": "paragraph",
+            "attrs": {
+              "textAlign": null
+            },
+            "content": [
+              {
+                "type": "text",
+                "text": "“아, 이 전시회는 개발자 컨퍼런스라기보다는 기업 대상 솔루션 전시회에 가깝구나.”"
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "익숙했던 이름, Lablup과 Backend.AI"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./images/backend-ai-booth.jpg",
+          "alt": "Backend.AI / Lablup 부스 사진",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그 다음으로는 Lablup 부스를 방문했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Lablup은 예전부터 알고 있던 기업이었다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "우리 학교에서도 인턴 공고를 종종 봤고, 국내에서 오픈소스를 기반으로 사업을 이어가는 몇 안 되는 기업이라는 점에서도 관심이 있었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "무엇보다 Backend.AI는 개인적으로 더 익숙했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "해군 SW개발병으로 복무하던 시절에 Backend.AI를 접해본 적이 있었고,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "제1회 해군·해병대 AI 경진대회에서도 실제로 사용해본 경험이 있었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그래서 부스에 방문했을 때도 단순히 처음 보는 제품을 구경한다기보다는,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "“아, 이걸 여기서 다시 보네”라는 느낌이 컸다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "부스에 계신 분과 짧게 이야기를 나누었고, 깊은 기술적인 대화를 오래 하지는 않았지만,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "내가 실제 환경에서 사용해본 제품을 만든 기업을 전시회 현장에서 다시 보니 꽤 반가웠다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "기술이나 제품을 책이나 문서로만 볼 때와,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "실제 기업 부스에서 하나의 서비스로 소개되는 모습을 볼 때의 느낌은 조금 달랐다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "실제로 써봤던 협업툴, Flow"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./images/flow-booth.jpg",
+          "alt": "Flow 부스 사진",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이후에는 Flow 부스를 방문했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Flow 역시 해군 개발병으로 근무하던 곳에서 사용했던 협업툴이었다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "그래서 부스에 가서 “예전에 실제로 사용해본 적이 있다”는 이야기를 하며 가볍게 대화를 나눴다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Flow 부스에서는 “대한민국 최초 AI 협업툴”이라는 방향성을 강조하고 있었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이 부분도 조금 인상적이었다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "내가 알고 있던 Flow는 기본적으로 협업툴이었다. 그런데 이제는 AI 기능이 결합되면서, 단순한 협업툴이 아니라 AI 협업툴이라는 이름으로 다시 설명되고 있었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "전시장을 돌다 보니 이런 흐름이 꽤 많이 보였다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "기존에 번역 서비스였던 제품도 AI 솔루션으로,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "협업툴도 AI 협업툴로,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "인프라 기업도 AI 인프라 기업으로 설명되고 있었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "AI가 이제는 특정 기능 하나를 의미한다기보다는,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "기존 제품을 다시 정의하고 포장하는 하나의 큰 키워드가 된 것 같았다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Full Stack AI Infra 세미나"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        }
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "./images/dsng-seminar.jpg",
+          "alt": "디에스엔지 세미나 사진",
+          "title": null,
+          "width": 100,
+          "align": "center",
+          "x": null
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "마지막으로는 디에스엔지에서 진행한 Full Stack AI Infra 관련 세미나를 잠깐 들었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "전시 부스들이 주로 제품 소개와 도입 사례 중심이었다면,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "세미나는 조금 더 인프라 관점에서 AI를 바라볼 수 있는 시간이었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "AI 서비스를 실제로 운영하기 위해서는 모델만 필요한 것이 아니다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "모델을 학습하고, 배포하고, 실행하고, 관리하기 위해서는"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "GPU, 서버, 스토리지, 네트워크, 클라우드 환경, 운영 플랫폼 등 여러 계층이 함께 필요하다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "나는 최근 시스템 소프트웨어, I/O, 스토리지, 인프라 쪽에 관심을 가지고 있어서 그런지,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "AI 모델 자체보다도 그 모델을 실제로 돌리기 위한 기반 구조가 더 눈에 들어왔다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "AI가 커질수록 결국 중요한 것은 “모델 하나를 잘 만드는 것”만이 아니라,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "그 모델을 안정적으로 실행하고 운영할 수 있는 전체 시스템이라는 생각이 들었다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "AI Expo에서 가장 크게 느낀 점"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이번 AI Expo를 다녀오면서 가장 크게 느낀 점은,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "이 전시회가 일반 소비자나 개발자보다는 기업 고객을 대상으로 한 B2B 중심 전시회에 가깝다는 것이었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "처음에는 다양한 AI 기술을 직접 체험하고,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "기술적인 구현 방식이나 내부 구조에 대한 이야기도 많이 들을 수 있을 것이라 기대했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "하지만 실제 현장에서는 대부분의 부스가 이런 방향에 가까웠다."
+          }
+        ]
+      },
+      {
+        "type": "bulletList",
+        "content": [
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "우리 솔루션을 기업에 어떻게 도입할 수 있는지"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "기존 업무를 얼마나 줄여줄 수 있는지"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "AI를 통해 어떤 비용 절감이나 생산성 향상이 가능한지"
+                  }
+                ]
+              }
+            ]
+          },
+          {
+            "type": "listItem",
+            "content": [
+              {
+                "type": "paragraph",
+                "attrs": {
+                  "textAlign": null
+                },
+                "content": [
+                  {
+                    "type": "text",
+                    "text": "기업 환경에서 어떻게 사용할 수 있는지"
+                  }
+                ]
+              }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "개발자 입장에서는 조금 아쉬운 부분도 있었다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "조금 더 깊은 기술 설명, 아키텍처, 성능 최적화, 실제 구현 방식 같은 이야기를 기대했기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "하지만 반대로 생각하면,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "AI가 실제 산업 현장에서 어떤 언어로 설명되고 있는지를 볼 수 있는 자리이기도 했다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "학교나 개발 공부를 할 때는 모델, 알고리즘, 성능, 구조 같은 단어에 집중하게 된다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "하지만 기업의 입장에서는 결국 “이걸 도입하면 무엇이 좋아지는가?”가 훨씬 중요해 보였다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "Physical AI가 확실히 뜨고 있었다"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "또 하나 인상 깊었던 점은 Physical AI에 대한 분위기였다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "전시장을 돌아다니다 보니 AI가 단순히 화면 안에서 텍스트를 생성하거나 이미지를 만드는 수준을 넘어,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "실제 물리 세계와 연결되는 방향으로 확장되고 있다는 느낌을 받았다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "로봇, 제조, 장비, 센서, 자동화와 연결된 AI들이 점점 더 많이 보였다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "최근 AI가 소프트웨어 안에서만 머무르지 않고,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "현실 세계의 장비와 환경을 이해하고 제어하는 방향으로 확장되고 있다는 이야기를 자주 들었는데,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "전시장에서도 그런 흐름이 어느 정도 느껴졌다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "앞으로의 AI는 단순한 챗봇이나 생성형 도구를 넘어서,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "실제 물리적 환경과 결합되는 방향으로 더 많이 발전할 것 같았다."
+          }
+        ]
+      },
+      {
+        "type": "horizontalRule"
+      },
+      {
+        "type": "heading",
+        "attrs": {
+          "textAlign": null,
+          "level": 2
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "마무리하며"
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이번 AI Expo는 내가 기대했던 개발자 컨퍼런스와는 조금 달랐다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "깊은 기술 세션을 듣고,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "구현 방식이나 내부 구조를 자세히 파고드는 자리는 아니었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "오히려 기업들이 AI를 어떻게 상품화하고 있는지,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "그리고 시장이 AI를 어떤 방식으로 받아들이고 있는지를 볼 수 있는 전시회에 가까웠다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "그래서 처음에는 조금 아쉬움도 있었다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "하지만 돌아보면 의미 있는 경험이었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "AI가 이제는 단순히 새로운 기술 하나가 아니라,"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "거의 모든 산업이 자신을 다시 설명하기 위해 사용하는 공통 언어가 되고 있다는 것을 직접 볼 수 있었기 때문이다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "개발자 입장에서는 여전히 더 깊은 기술적 이해가 중요하다고 생각한다."
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "하지만 동시에 기술이 시장에 나왔을 때 어떤 방식으로 포장되고, 설명되고, 판매되는지도 알아야 한다는 생각이 들었다."
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": {
+          "textAlign": null
+        },
+        "content": [
+          {
+            "type": "text",
+            "text": "이번 AI Expo는 그런 점에서"
+          },
+          {
+            "type": "hardBreak"
+          },
+          {
+            "type": "text",
+            "text": "“AI 기술”보다 “AI 시장의 현재 분위기”를 더 잘 볼 수 있었던 경험이었다."
+          }
+        ]
+      }
+    ]
+  }
+}
