@@ -1,0 +1,478 @@
+{
+  "title": "2026 AWS Seoul Summit 방문기: AI 시대의 개발자에게 필요한 넓이와 깊이",
+  "datetime": "2026-05-21T04:23:53.000Z",
+  "date": "2026-05-21",
+  "category": "dev",
+  "tags": [],
+  "summary": "",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/aws-seoul-summit-2026/summit-keynote.jpg",
+          "alt": "AWS Seoul Summit 기조강연장 전경",
+          "title": null,
+          "width": 60,
+          "align": "center",
+          "x": 0
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "2026 AWS Seoul Summit에 다녀왔다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "처음에는 기조강연을 들었다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "AWS 행사답게 규모도 컸고, 무대 연출이나 발표 구성도 상당히 인상적이었다. 단순히 클라우드 기술을 소개하는 자리를 넘어서, 앞으로 개발자와 기업이 어떤 방향으로 움직여야 하는지를 보여주는 자리처럼 느껴졌다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그중 가장 기억에 남았던 메시지는 “T자형 인재가 되어야 한다”는 이야기였다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "T자형 인재, 그리고 다시 떠오른 교수님과의 면담" }
+        ]
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/aws-seoul-summit-2026/t-shaped-developer.jpg",
+          "alt": "기조강연의 The Renaissance Developer, T자형 인재 슬라이드",
+          "title": null,
+          "width": 60,
+          "align": "center",
+          "x": 0
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기조강연에서 T자형 인재에 대한 이야기가 나왔을 때, 최근 주용수 교수님과 면담했던 내용이 떠올랐다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그때 교수님께서도 비슷한 맥락의 이야기를 해주셨다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "정확한 표현은 기억나지 않지만, 단순한 T자형보다는 comb-shaped에 가까운 형태의 인재가 되면 좋겠다는 말씀이었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "하나의 분야만 깊게 파는 것도 중요하지만, 여러 분야를 넓게 이해하고 그중 몇 가지 영역에서는 스페셜리스트 수준의 깊이를 가져가는 방향이 좋다는 의미로 받아들였다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기조강연에서 말한 T자형 인재도 결국 비슷한 방향을 가리키고 있었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "한 분야에 대한 깊이는 필요하다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "하지만 AI 시대에는 그 깊이만으로는 부족하다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "클라우드, 데이터, 인프라, 보안, 개발 생산성, 비즈니스 이해까지 여러 영역이 연결되기 때문이다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "예전에는 한 가지 기술을 잘 다루는 것이 충분히 큰 경쟁력이었다면, 이제는 여러 분야를 연결해서 문제를 바라보는 능력이 더 중요해지고 있다는 생각이 들었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "특히 AI가 개발 도구와 클라우드 인프라 전반에 빠르게 들어오고 있는 지금은, 단순히 “나는 백엔드 개발자다”, “나는 프론트엔드 개발자다”처럼 하나의 역할로만 자신을 정의하기 어려워지는 것 같다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "결국 앞으로는 한 영역의 전문성을 기반으로 하되, 다른 영역의 언어도 이해할 수 있는 사람이 더 강해질 것 같았다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "다양한 기업 부스들, 하지만 조금 아쉬웠던 설명" }
+        ]
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/aws-seoul-summit-2026/datacenter-booth.jpg",
+          "alt": "Data Center 하드웨어를 전시한 부스",
+          "title": null,
+          "width": 55,
+          "align": "center",
+          "x": 0
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기조강연 이후에는 여러 부스를 돌아다녔다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Oracle, GitLab, Red Hat, LG CNS, Notion 등 이름만 들어도 익숙한 크고 유명한 기업들이 많이 참여하고 있었다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "평소에 기술적으로 관심이 있던 기업들도 많았기 때문에, 부스에서 어떤 이야기를 들을 수 있을지 기대했다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "하지만 부스를 돌아다니면서 조금 아쉬웠던 점도 있었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "생각보다 많은 부스에서 기술이나 서비스에 대한 자세한 설명을 듣기보다는, 명함을 받거나 설문조사를 요청하는 흐름이 많았다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "물론 이런 행사가 기업 입장에서는 잠재 고객을 만나고 리드를 확보하는 자리라는 점을 이해한다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그럼에도 개발자나 학생 입장에서는 조금 더 아쉬움이 남았다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "“이 제품이 어떤 문제를 해결하는지”" },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "“기술적으로 어떤 특징이 있는지”" },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "“실제 현업에서는 어떤 방식으로 쓰이는지”" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이런 이야기를 조금 더 들을 수 있었다면 훨씬 좋았을 것 같다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "특히 GitLab, Red Hat, Notion처럼 개발자에게 익숙한 기업들의 부스에서는 제품의 구체적인 활용 방식이나 최근 변화에 대해 더 듣고 싶었다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "하지만 현장에서는 설명보다는 방문자 정보를 받는 쪽에 무게가 실려 있는 느낌이라, 기대했던 만큼의 깊은 대화를 나누기는 어려웠다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "AWS 실전프로젝트에서 사용했던 Kiro" }
+        ]
+      },
+      {
+        "type": "image",
+        "attrs": {
+          "src": "media/assets/posts/dev/aws-seoul-summit-2026/kiro-keynote.jpg",
+          "alt": "Kiro의 Steering, Spec Driven Development를 소개하는 기조강연 슬라이드",
+          "title": null,
+          "width": 60,
+          "align": "center",
+          "x": 0
+        }
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "행사장에서 또 하나 눈에 들어왔던 것은 Kiro였다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "현재 AWS 실전프로젝트 수업을 듣고 있는데, 그 과정에서 Kiro를 사용해본 적이 있다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "그래서 행사에서 Kiro가 강조되는 것을 보면서 조금 더 관심이 갔다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "내가 수업에서 사용해본 도구가 실제 AWS Summit 현장에서 중요하게 다뤄지고 있다는 점이 흥미로웠다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "동시에 이런 생각도 들었다." }
+        ]
+      },
+      {
+        "type": "blockquote",
+        "attrs": { "icon": "info" },
+        "content": [
+          {
+            "type": "paragraph",
+            "attrs": { "textAlign": null },
+            "content": [
+              { "type": "text", "text": "“아, 지금 이 분야에 실제로 돈이 흐르고 있구나.”" }
+            ]
+          }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "AI가 단순히 챗봇이나 데모 수준에 머무르는 것이 아니라, 개발 과정 자체를 바꾸는 방향으로 빠르게 이동하고 있다는 느낌이었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "최근에는 개발자가 코드를 직접 작성하는 방식뿐만 아니라, 요구사항을 정리하고, 아키텍처를 설계하고, 구현을 보조하고, 배포까지 이어지는 전체 과정에서 AI가 개입하고 있다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Kiro가 강조되는 것도 결국 이런 흐름과 연결되어 있다고 느꼈다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "AI 개발 도구는 단순히 “코드를 대신 짜주는 도구”가 아니라, 앞으로 개발자가 일하는 방식 자체를 바꿀 가능성이 크다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "그리고 AWS가 이 부분을 강하게 밀고 있다는 것은, 클라우드 기업들이 앞으로의 개발 경험을 얼마나 중요하게 보고 있는지를 보여주는 장면처럼 느껴졌다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "AWS Summit에서 느낀 가장 큰 인상" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이번 AWS Seoul Summit을 다녀오면서 가장 크게 느낀 점은, AI가 이제 클라우드와 완전히 분리해서 생각할 수 없는 주제가 되었다는 것이다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "예전에는 AI라고 하면 모델, 데이터, 알고리즘 같은 단어가 먼저 떠올랐다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "하지만 이번 행사를 보면서 AI는 결국 인프라, 플랫폼, 개발 도구, 기업 업무 환경과 함께 움직이고 있다는 생각이 들었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "AI 모델 하나를 잘 만드는 것도 중요하지만," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "그 모델을 어디에서 실행할지," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "어떻게 배포할지," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "어떻게 운영할지," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "어떻게 기존 업무와 연결할지가 점점 더 중요해지고 있다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "AWS Summit은 이런 흐름을 굉장히 잘 보여주는 자리였다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기조강연에서는 개발자가 어떤 역량을 가져야 하는지를 이야기했고," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "부스에서는 여러 기업들이 클라우드와 AI를 자신들의 제품에 어떻게 연결하고 있는지를 보여줬고," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "Kiro 같은 도구는 AI가 개발자의 작업 방식 자체에 들어오고 있음을 보여줬다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "개발자로서 남은 생각" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "개인적으로 이번 행사는 단순히 “AWS 기술을 구경한 행사”라기보다는, 앞으로 개발자가 어떤 방향으로 성장해야 하는지 다시 생각하게 만든 자리였다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기조강연에서 말한 T자형 인재," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "교수님과의 면담에서 들었던 comb-shaped에 가까운 인재상," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "그리고 행사장에서 본 AI 개발 도구와 클라우드 인프라의 흐름이 하나로 연결되는 느낌이었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "앞으로는 하나의 기술만 깊게 아는 것보다, 여러 기술이 어떻게 연결되는지를 이해하는 능력이 더 중요해질 것 같다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "물론 깊이는 여전히 필요하다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "하지만 그 깊이가 고립되어 있으면 안 된다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "내가 관심 있는 시스템 소프트웨어, I/O, 스토리지, 인프라 같은 영역도 결국 클라우드, AI, 개발 도구, 운영 환경과 연결될 때 더 큰 의미를 가진다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이번 AWS Seoul Summit은 그 연결 지점을 조금 더 현실적으로 볼 수 있었던 경험이었다." }
+        ]
+      },
+      { "type": "horizontalRule" },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [
+          { "type": "text", "text": "마무리하며" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "2026 AWS Seoul Summit은 규모도 크고, 참여 기업도 많고, 전체적으로 에너지가 큰 행사였다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "다만 부스에서는 생각보다 깊은 기술 설명을 듣기 어려웠고, 명함이나 설문조사 중심으로 운영되는 곳이 많아 조금 아쉬웠다." },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "개발자나 학생 입장에서는 제품의 내부 구조나 실제 사용 사례, 기술적인 차별점을 더 듣고 싶었기 때문이다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그럼에도 이번 행사는 의미가 있었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "AI 시대에 개발자가 어떤 역량을 가져야 하는지," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "클라우드 기업들이 어디에 집중하고 있는지," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "그리고 지금 시장에서 어떤 분야에 힘이 실리고 있는지를 직접 느낄 수 있었기 때문이다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "특히 T자형 인재에 대한 메시지와 Kiro에 대한 강조는 기억에 남았다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "결국 앞으로의 개발자는 단순히 코드를 작성하는 사람이 아니라," },
+          { "type": "hardBreak" },
+          { "type": "text", "text": "AI와 클라우드, 인프라와 비즈니스가 만나는 지점에서 문제를 정의하고 해결하는 사람이 되어야 할 것 같다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이번 AWS Seoul Summit은 그 방향을 다시 한 번 생각하게 만든 경험이었다." }
+        ]
+      }
+    ]
+  }
+}
