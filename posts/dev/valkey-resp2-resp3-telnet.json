@@ -1,0 +1,361 @@
+{
+  "title": "Valkey 에 telnet 으로 붙어서 RESP2 / RESP3 직접 보기",
+  "datetime": "2026-05-31T08:30:00.000Z",
+  "date": "2026-05-31",
+  "category": "dev",
+  "tags": [],
+  "summary": "",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "redis-cli 없이 그냥 telnet 으로 붙어서 RESP 가 실제로 어떻게 생긴 바이트로 오가는지 직접 보자는 과제. 평소에는 클라이언트가 알아서 파싱해주니까 어떤 모양으로 응답이 오는지 신경 쓸 일이 없었는데, RESP2 랑 RESP3 차이가 손에 잡힐 만큼 봐두면 두고두고 도움이 될 것 같아서 처음부터 천천히 찍어봤다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "Valkey 띄우기" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Redis 대신 Valkey 로. 명령/프로토콜은 어차피 동일하다. 도커로 한 줄." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "$ docker run -d --name valkey -p 6379:6379 valkey/valkey:8\n$ docker logs valkey | tail -3\n... Ready to accept connections tcp\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "굳이 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "valkey-cli" },
+          { "type": "text", "text": " 도 안 깐다. 우리는 raw 바이트를 보러 온거니까." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "telnet 으로 그냥 붙기" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "$ telnet 127.0.0.1 6379\nTrying 127.0.0.1...\nConnected to 127.0.0.1.\nEscape character is '^]'.\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "RESP 는 사실 inline command 도 지원해서 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "SET k v" },
+          { "type": "text", "text": " 이런 식으로 그냥 줄 단위로 쳐도 받는다. 응답은 RESP 포맷 그대로 돌려주기 때문에 raw 바이트가 그대로 보인다. 손으로 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*3\\r\\n$3\\r\\nSET\\r\\n..." },
+          { "type": "text", "text": " 같은걸 일일이 칠 필요는 없음." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP2 기본 타입 5개" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "RESP2 응답 타입은 딱 다섯 개. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "+" },
+          { "type": "text", "text": " Simple String / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "-" },
+          { "type": "text", "text": " Error / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ":" },
+          { "type": "text", "text": " Integer / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$" },
+          { "type": "text", "text": " Bulk String / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*" },
+          { "type": "text", "text": " Array. 모든 응답은 결국 이 다섯 개의 조합." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "SET hello world\n+OK\nGET hello\n$5\nworld\nGET nope\n$-1\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "+OK" },
+          { "type": "text", "text": " 가 Simple String. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$5\\r\\nworld\\r\\n" },
+          { "type": "text", "text": " 는 Bulk String — 길이(5) 알려주고 그만큼의 바이트를 보내는 방식. 그래서 안에 줄바꿈/이진 데이터 들어와도 깨지지 않는다. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$-1" },
+          { "type": "text", "text": " 은 null bulk. RESP2 에서 \"값 없음\" 은 이걸로 표현." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "INCR cnt\n:1\nINCR cnt\n:2\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Integer 는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ":" },
+          { "type": "text", "text": " 뒤에 십진수. 64비트 정수까지. 의외로 깔끔해서 보고있으면 \"아 별거 없네\" 싶다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "ZADD / ZRANGE 로 Array 보기" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ZADD board 10 a 20 b 30 c\n:3\nZRANGE board 0 -1\n*3\n$1\na\n$1\nb\n$1\nc\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*3" },
+          { "type": "text", "text": " 가 \"이제부터 원소 3개짜리 배열\" 이라는 헤더. 그 뒤로 원소가 줄줄이 나오는데 각 원소도 자기 타입의 prefix 가 붙는다. 여기선 다 Bulk String 이라 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$1\\r\\na\\r\\n" },
+          { "type": "text", "text": " 가 세 번 반복. 중첩 array 라면 원소 자리에 또 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*N" },
+          { "type": "text", "text": " 이 박힐 거고. 재귀적이라 의외로 단순." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ZRANGE board 0 -1 WITHSCORES\n*6\n$1\na\n$2\n10\n$1\nb\n$2\n20\n$1\nc\n$2\n30\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "여기서 좀 거슬리는 부분. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "WITHSCORES" },
+          { "type": "text", "text": " 옵션 주면 member 랑 score 가 그냥 1차원 배열로 번갈아 나온다. 짝수 인덱스가 member, 홀수가 score. 그리고 score 도 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ":" },
+          { "type": "text", "text": " (Integer) 이 아니라 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$2\\r\\n10" },
+          { "type": "text", "text": " 처럼 Bulk String 으로 내려온다. RESP2 에 실수 타입이 없으니까 결국 클라이언트가 \"이 문자열을 double 로 파싱해라\" 라는 추가 처리를 다 떠안는 셈. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "[(m, score), ...]" },
+          { "type": "text", "text": " 모양으로 묶어주는 것도 클라이언트 몫." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "에러도 한번" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "SETT hello world\n-ERR unknown command 'SETT', with args beginning with: 'hello' 'world'\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "-" },
+          { "type": "text", "text": " 로 시작하고 한 줄짜리 text. 앞 토큰(여기선 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "ERR" },
+          { "type": "text", "text": ") 이 에러 코드 역할. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "WRONGTYPE" },
+          { "type": "text", "text": " 같은게 그 자리에 들어가는걸 본 적이 있을거임." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP3 로 올리기 (HELLO 3)" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기본 연결은 RESP2. RESP3 로 바꾸려면 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "HELLO 3" },
+          { "type": "text", "text": " 한 번 보내야 한다. 이거 안 보내면 서버는 평생 RESP2 로 응답함." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "HELLO 3\n%7\n$6\nserver\n$6\nvalkey\n$7\nversion\n$5\n8.0.0\n$5\nproto\n:3\n$2\nid\n:7\n$4\nmode\n$10\nstandalone\n$4\nrole\n$6\nmaster\n$7\nmodules\n*0\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "맨 앞이 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*" },
+          { "type": "text", "text": " 가 아니라 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%" },
+          { "type": "text", "text": " 로 바뀐 게 핵심. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%7" },
+          { "type": "text", "text": " 은 \"7쌍짜리 Map\". 키-값 짝지어서 server→valkey, version→8.0.0, proto→3 식으로 내려온다. RESP2 였으면 똑같은 응답이 평탄한 14개짜리 array 였을거고, 클라이언트가 알아서 짝지어 dict 만들었어야 했다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP3 에서 ZRANGE WITHSCORES 다시" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ZRANGE board 0 -1 WITHSCORES\n*3\n*2\n$1\na\n,10\n*2\n$1\nb\n,20\n*2\n$1\nc\n,30\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "확 바뀌었다. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*3" },
+          { "type": "text", "text": " 짜리 바깥 array 안에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "*2" },
+          { "type": "text", "text": " 짜리 [member, score] 쌍이 들어있는 2차원 구조. 그리고 score 가 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ",10" },
+          { "type": "text", "text": " — RESP3 에서 새로 생긴 Double 타입(접두사 콤마)으로 내려온다. 문자열 → double 로 다시 파싱할 필요가 없어졌고, [(m, s), ...] 모양으로 묶는 짓도 더 이상 클라이언트 몫이 아님." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "CONFIG GET 도 같이 비교" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [{ "type": "text", "text": "RESP2:" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "CONFIG GET maxmemory\n*2\n$9\nmaxmemory\n$1\n0\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [{ "type": "text", "text": "RESP3:" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "CONFIG GET maxmemory\n%1\n$9\nmaxmemory\n$1\n0\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Array 가 통째로 Map 으로 바뀐다. 키 여러개 한번에 받아오면 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%N" },
+          { "type": "text", "text": " 으로 깔끔하게 떨어져서 클라이언트 코드가 진짜 짧아진다. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "CLIENT INFO" },
+          { "type": "text", "text": " 같은 \"긴 텍스트 응답\" 도 RESP3 에서는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "=" },
+          { "type": "text", "text": " (Verbatim string) 으로 와서 \"이건 텍스트다\" 라는 타입 힌트가 같이 붙는다. RESP2 에서는 그냥 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$" },
+          { "type": "text", "text": " 일반 bulk 라서 의미 구분이 없었던 부분." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP3 에서 새로 생긴 타입들 정리" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "직접 찍어보면서 본 김에 한 번에 정리. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "_" },
+          { "type": "text", "text": " Null / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "#" },
+          { "type": "text", "text": " Boolean (t / f) / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "," },
+          { "type": "text", "text": " Double / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "(" },
+          { "type": "text", "text": " Big Number / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "!" },
+          { "type": "text", "text": " Bulk Error (긴 에러) / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "=" },
+          { "type": "text", "text": " Verbatim String / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%" },
+          { "type": "text", "text": " Map / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "~" },
+          { "type": "text", "text": " Set / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "|" },
+          { "type": "text", "text": " Attribute / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ">" },
+          { "type": "text", "text": " Push. 이 중에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ">" },
+          { "type": "text", "text": " (Push) 가 의외로 중요한데 — pub/sub 같은 \"요청 없이 서버가 먼저 보내는 메시지\" 가 RESP2 에서는 그냥 일반 array 랑 동일한 prefix 라 클라이언트가 문맥 보고 구분해야 했다. RESP3 에서는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": ">" },
+          { "type": "text", "text": " 하나로 \"이건 사용자 요청 응답 아님, 푸시임\" 이 바로 구분되어서, request/response 흐름이랑 안 섞인다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "정리" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "한 줄 정리: RESP3 는 서버가 \"이거 정수, 이거 실수, 이거 map, 이거 set, 이거 push\" 까지 같이 알려주는 버전. RESP2 는 죄다 array/string 으로 평탄화해서 보내고 클라이언트가 알아서 해석. 직접 telnet 으로 응답 바이트를 쳐서 보고나니 \"RESP3 가 클라이언트 코드를 왜 줄여주는지\" 가 손에 잡힌다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그리고 RESP3 쓰려면 connect 직후에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "HELLO 3" },
+          { "type": "text", "text": " 보내는걸 잊지 말 것. 안 보내면 끝까지 RESP2. 라이브러리들도 자동으로 보내주는 옵션이 따로 있는 경우가 많아서, 직접 클라이언트 짤거면 이 한 줄이 사실상 첫 줄이라고 보면 됨." }
+        ]
+      }
+    ]
+  }
+}
