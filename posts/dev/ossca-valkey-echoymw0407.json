@@ -1,0 +1,489 @@
+{
+  "title": "OSSCA Valkey 트랙 — echoymw0407 명령 만들기 (과제 4, 5)",
+  "datetime": "2026-05-24T13:40:00.000Z",
+  "date": "2026-05-24",
+  "category": "dev",
+  "tags": [],
+  "summary": "",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "OSSCA 2026 Valkey 트랙 과제 4번/5번. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echo<자기아이디>" },
+          { "type": "text", "text": " 라는 커스텀 명령어를 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echoCommand" },
+          { "type": "text", "text": " 랑 똑같이 동작하게 만드는거고, 5번은 그 응답 앞에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echo2_" },
+          { "type": "text", "text": " prefix 붙이기. 본격적으로 Valkey 소스를 뜯어보는 첫 과제라 어디부터 손대야 할지 막막했는데, 다른 분들이 이미 올려둔 PR 들이 좋은 길잡이가 됐다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "다른 사람 PR 부터 훑기" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "바로 코드 뒤지기 전에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "charsyam/ossca-2026-valkey" },
+          { "type": "text", "text": " 에 올라온 PR 들을 먼저 봤다. 30개쯤 있고 패턴이 명확하다. 거의 전원이 같은 세 파일만 건드림." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "src/server.h     ← 함수 프로토타입 한 줄\nsrc/server.c     ← 구현 본체 (echoCommand 옆에 붙임)\nsrc/commands.def ← 명령 메타데이터 + 명령 테이블 등록\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이게 다임. 테스트 코드도 안 건드림. 처음에는 \"이 정도면 진짜 충분한가?\" 싶었는데, 결국 명령 하나 추가하는 최소 단위가 이 셋이라는걸 다른 사람들 diff 보면서 납득함." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "src/server.h — 프로토타입 한 줄" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "" },
+        "content": [
+          { "type": "text", "text": " void authCommand(client *c);\n void pingCommand(client *c);\n void echoCommand(client *c);\n+void echoymw0407Command(client *c);\n void commandCommand(client *c);\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Valkey 는 명령 함수 시그니처가 전부 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "void xxxCommand(client *c)" },
+          { "type": "text", "text": " 로 통일되어 있어서 프로토타입 한 줄로 끝." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "src/server.c — 구현 (과제 4)" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "원본 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echoCommand" },
+          { "type": "text", "text": " 가 한 줄짜리라 그대로 따라감." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "" },
+        "content": [
+          { "type": "text", "text": " void echoCommand(client *c) {\n     addReplyBulk(c, c->argv[1]);\n }\n\n+void echoymw0407Command(client *c) {\n+    addReplyBulk(c, c->argv[1]);\n+}\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "c->argv[1]" },
+          { "type": "text", "text": " 이 인자로 받은 메시지 (robj 포인터), " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk" },
+          { "type": "text", "text": " 가 그걸 RESP Bulk String 으로 클라이언트한테 돌려보내는 헬퍼. 끝." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "src/commands.def — 메타데이터 + 명령 등록" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "여기가 처음엔 좀 낯설었다. Valkey 의 모든 명령 메타데이터(이름, 설명, 복잡도, history, key spec, ACL 카테고리, flag) 가 다 이 파일 안에 매크로로 박혀있다. 12000줄짜리 거대한 자동 생성 파일이고, 원래는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "src/commands/*.json" },
+          { "type": "text", "text": " 에서 generate 되는건데 과제 범위에서는 다들 그냥 손으로 두 군데를 추가하는 식으로 한다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "(1) ECHO 블록 바로 밑에 ECHOYMW0407 블록 추가:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "" },
+        "content": [
+          { "type": "text", "text": "+/********** ECHOYMW0407 ********************/\n+\n+#ifndef SKIP_CMD_HISTORY_TABLE\n+/* ECHOYMW0407 history */\n+#define ECHOYMW0407_History NULL\n+#endif\n+\n+#ifndef SKIP_CMD_TIPS_TABLE\n+/* ECHOYMW0407 tips */\n+#define ECHOYMW0407_Tips NULL\n+#endif\n+\n+#ifndef SKIP_CMD_KEY_SPECS_TABLE\n+/* ECHOYMW0407 key specs */\n+#define ECHOYMW0407_Keyspecs NULL\n+#endif\n+\n+/* ECHOYMW0407 argument table */\n+struct COMMAND_ARG ECHOYMW0407_Args[] = {\n+{MAKE_ARG(\"message\",ARG_TYPE_STRING,-1,NULL,NULL,NULL,CMD_ARG_NONE,0,NULL)},\n+};\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "history / tips / key specs 는 다 NULL. 인자는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "message" },
+          { "type": "text", "text": " 라는 STRING 한 개. ECHO 가 갖는 메타데이터를 그대로 따라간다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "(2) " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "serverCommandTable[]" },
+          { "type": "text", "text": " 에 한 줄 추가:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "" },
+        "content": [
+          { "type": "text", "text": " {MAKE_CMD(\"echo\",\"Returns the given string.\",\"O(1)\",\"1.0.0\",...,echoCommand,2,CMD_LOADING|CMD_STALE|CMD_FAST,ACL_CATEGORY_CONNECTION|ACL_CATEGORY_FAST,...)},\n+{MAKE_CMD(\"echoymw0407\",\"Returns the given string.\",\"O(1)\",\"1.0.0\",...,echoymw0407Command,2,CMD_LOADING|CMD_STALE|CMD_FAST,ACL_CATEGORY_CONNECTION|ACL_CATEGORY_FAST,...)},\n {MAKE_CMD(\"hello\",...)},\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "두 번째 인자 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "2" },
+          { "type": "text", "text": " 가 arity (명령 자체 + message 1개 = 2). flag 는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "CMD_LOADING|CMD_STALE|CMD_FAST" },
+          { "type": "text", "text": " — 로딩 중에도 / replica stale 일 때도 / fast path 로 실행 가능. ACL 은 connection + fast 카테고리. ECHO 의 설정을 1:1로 복사." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "빌드 — Docker 로 우회" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "Windows 라 직접 빌드는 안되고, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "debian:bookworm-slim" },
+          { "type": "text", "text": " 컨테이너 띄워서 빌드함." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "$ docker run --rm -v $(pwd):/src -w /src debian:bookworm-slim bash -c \\\n    \"apt-get update -qq && \\\n     apt-get install -y -qq build-essential pkg-config git dos2unix && \\\n     git config --global --add safe.directory /src && \\\n     cd src && dos2unix mkreleasehdr.sh && sh mkreleasehdr.sh && \\\n     cd .. && make -C src -j\\$(nproc) MALLOC=libc valkey-server\"\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "삽질 포인트 두 개." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "하나, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "jemalloc/jemalloc.h: No such file or directory" },
+          { "type": "text", "text": " 에러. 기본 빌드는 deps 안에 있는 jemalloc 을 쓰는데 빌드 환경에 따라 자꾸 못 잡음. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "MALLOC=libc" },
+          { "type": "text", "text": " 옵션 주면 그냥 glibc 의 malloc 으로 빌드함. 검증 용도라 충분." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "둘, Windows git 이 텍스트 파일을 CRLF 로 체크아웃해서 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "mkreleasehdr.sh: Syntax error: end of file unexpected (expecting \"then\")" },
+          { "type": "text", "text": " 가 떴다. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "dos2unix mkreleasehdr.sh" },
+          { "type": "text", "text": " 한 줄로 해결. (장기적으론 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "git config core.autocrlf false" },
+          { "type": "text", "text": " 후 재클론하는게 더 깔끔.)" }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "동작 확인 — raw socket 으로 RESP 직접" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이전 RESP 글에서 만든 socket 스크립트 그대로 활용. 빌드한 binary 를 컨테이너로 띄우고 6380 으로 노출:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "$ docker run -d --name valkey-built -p 6380:6379 \\\n    -v $(pwd):/work -w /work/src debian:bookworm-slim \\\n    ./valkey-server --port 6379 --bind 0.0.0.0 --protected-mode no \\\n    --enable-debug-command yes \\\n    --loadmodule modules/lua/libvalkeylua.so\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "여기도 함정이 있었음. 그냥 띄우면 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "Lua engine initialization failed" },
+          { "type": "text", "text": " 로 죽는다. 빌드 산출물에 같이 만들어진 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "modules/lua/libvalkeylua.so" },
+          { "type": "text", "text": " 를 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "--loadmodule" },
+          { "type": "text", "text": " 로 명시해줘야 한다. (Valkey 8 부터 Lua 가 외부 모듈로 분리된 영향)." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그리고 명령 두 개 비교:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ECHO hello\n$5\nhello\n\nECHOYMW0407 hello\n$5\nhello\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "응답 길이($5), 페이로드(hello) 똑같음. 명령은 분명히 새로 추가됐는데 결과는 같음 — 과제 4번 의도대로." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "COMMAND INFO" },
+          { "type": "text", "text": " 로도 한번 확인:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "COMMAND INFO echoymw0407\n*1\n*10\n$11\nechoymw0407\n:2          ← arity\n*3\n+loading\n+stale\n+fast\n:0\n:0\n:0\n*2\n+@fast\n+@connection\n*0\n*0\n*0\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "commands.def 에 박은 flag (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "loading|stale|fast" },
+          { "type": "text", "text": ") 랑 ACL 카테고리 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "@fast, @connection" },
+          { "type": "text", "text": ") 가 그대로 메타로 노출된다. 명령 등록이 깔끔히 됐다는 증거." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "과제 5 — echo2_ prefix 붙이기" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "같은 함수를 sds 기반으로 다시 작성." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "" },
+        "content": [
+          { "type": "text", "text": " void echoymw0407Command(client *c) {\n-    addReplyBulk(c, c->argv[1]);\n+    sds reply = sdsempty();\n+\n+    reply = sdscatfmt(reply, \"echo2_%S\", objectGetVal(c->argv[1]));\n+\n+    addReplyBulkSds(c, reply);\n }\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "세 가지 디테일." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "하나, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk" },
+          { "type": "text", "text": " → " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": " 로 함수가 바뀜. Valkey 에서 Bulk String 응답 보내는 헬퍼가 인자 타입에 따라 분리되어 있음 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk(robj*)" },
+          { "type": "text", "text": ", " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds(sds)" },
+          { "type": "text", "text": ", " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkCString(char*)" },
+          { "type": "text", "text": " 등)." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "둘, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 의 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%S" },
+          { "type": "text", "text": " 는 sds 타입을 받는 placeholder. 일반 printf 의 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%s" },
+          { "type": "text", "text": " (C 문자열) 와 다르다. sds 는 길이를 헤더에 들고 있는 자료구조라, %S 를 쓰면 strlen 안 돌고 바로 길이 가져다 씀." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "셋, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "objectGetVal(c->argv[1])" },
+          { "type": "text", "text": " 로 robj 안에서 sds 를 꺼내야 함. argv 는 robj* 인데 sdscatfmt 는 sds 를 받으니까 한 번 까줘야 함." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "다시 빌드해서 확인:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ECHOYMW0407 hello\n$11\necho2_hello\n\nECHOYMW0407 \"world from blog\"\n$21\necho2_world from blog\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "prefix 잘 붙고, Bulk 길이 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$11" },
+          { "type": "text", "text": " = " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echo2_" },
+          { "type": "text", "text": "(6) + " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "hello" },
+          { "type": "text", "text": "(5), " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$21" },
+          { "type": "text", "text": " = 6 + 15) 도 정확. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 가 sds 헤더의 길이를 그대로 들고 와서 새 sds 헤더에 박아주기 때문에 따로 길이 계산 코드를 쓸 필요가 없다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP3 에서도 똑같이 동작" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "HELLO 3\n%7\n...\nECHOYMW0407 hello\n$11\necho2_hello\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": " 는 RESP 버전이랑 무관하게 그냥 Bulk String " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$" },
+          { "type": "text", "text": " 으로 응답을 만든다. RESP3 에서 새로 생긴 Map/Set/Double/Verbatim 같은 타입은 클라이언트가 명시적으로 그 타입을 요청했거나(예: ZRANGE WITHSCORES), 응답 의미상 다른 모양이 필요할 때만 쓰임. 단순 echo 는 RESP2/3 출력이 동일." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "PR 은 두 브랜치로 분리" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "과제 4 / 5 를 한 PR 에 묶지 않고 두 브랜치로 쪼갰다." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "feature/add-echoymw0407-command        # 과제 4 — 명령 신규 추가\nfeature/add-prefix-to-echoymw0407      # 과제 5 — 응답에 echo2_ prefix\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "리뷰어 입장에서 \"명령 등록\" 과 \"응답 포맷 변경\" 은 서로 다른 관심사라, 분리해두면 diff 의도가 더 또렷하게 보임. 두 번째 PR 의 base 는 첫 번째 브랜치로 잡는것도 한 방법이고, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "unstable" },
+          { "type": "text", "text": " 에 둘 다 cherry-pick 해도 충돌 안 나는 구조라 그냥 base 를 unstable 로 둠." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "정리" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "새 명령 추가의 최소 단위는 세 파일 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "server.h" },
+          { "type": "text", "text": " 프로토타입 + " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "server.c" },
+          { "type": "text", "text": " 구현 + " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "commands.def" },
+          { "type": "text", "text": " 메타데이터+등록). 구현 자체는 한두 줄이지만 commands.def 의 매크로 패턴이 진입장벽이라 다른 사람 PR 한두 개 먼저 훑어보는게 빠르다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "그리고 응답 포맷 바꿀 때 헬퍼 함수가 인자 타입별로 분리되어 있다는 것 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk" },
+          { "type": "text", "text": " vs " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": "), " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 의 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%S" },
+          { "type": "text", "text": " 는 sds 전용이고 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%s" },
+          { "type": "text", "text": " (C string) 랑 다르다는 것 — 이런 디테일은 직접 짜보고 빌드 에러 한 번 받아봐야 손에 붙는다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "마지막으로, 명령 추가는 RESP 프로토콜 버전이랑 직교한다는 점도 응답 바이트를 직접 찍어보고 다시 확인함. Bulk 응답이라 RESP2/3 동일하게 떨어진다." }
+        ]
+      }
+    ]
+  }
+}
