@@ -31,7 +31,7 @@
         "type": "codeBlock",
         "attrs": { "language": "plain", "title": "" },
         "content": [
-          { "type": "text", "text": "$ docker run -d --name valkey -p 6379:6379 valkey/valkey:8\n$ docker logs valkey | tail -3\n... Ready to accept connections tcp\n" }
+          { "type": "text", "text": "$ docker run -d --name valkey -p 6379:6379 valkey/valkey:8\n$ docker logs valkey | tail -3\n1:M 31 May 2026 15:55:24.147 * Server initialized\n1:M 31 May 2026 15:55:24.148 * Ready to accept connections tcp\n" }
         ]
       },
       {
@@ -211,7 +211,7 @@
         "type": "codeBlock",
         "attrs": { "language": "plain", "title": "" },
         "content": [
-          { "type": "text", "text": "HELLO 3\n%7\n$6\nserver\n$6\nvalkey\n$7\nversion\n$5\n8.0.0\n$5\nproto\n:3\n$2\nid\n:7\n$4\nmode\n$10\nstandalone\n$4\nrole\n$6\nmaster\n$7\nmodules\n*0\n" }
+          { "type": "text", "text": "HELLO 3\n%7\n$6\nserver\n$6\nvalkey\n$7\nversion\n$5\n8.1.7\n$5\nproto\n:3\n$2\nid\n:4\n$4\nmode\n$10\nstandalone\n$4\nrole\n$6\nmaster\n$7\nmodules\n*0\n" }
         ]
       },
       {
@@ -287,13 +287,62 @@
         "content": [
           { "type": "text", "text": "Array 가 통째로 Map 으로 바뀐다. 키 여러개 한번에 받아오면 " },
           { "type": "text", "marks": [{ "type": "code" }], "text": "%N" },
-          { "type": "text", "text": " 으로 깔끔하게 떨어져서 클라이언트 코드가 진짜 짧아진다. " },
+          { "type": "text", "text": " 으로 깔끔하게 떨어져서 클라이언트 코드가 진짜 짧아진다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "CLIENT INFO — Verbatim String 까지" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "긴 텍스트 응답이 RESP2/3 에서 어떻게 다르게 오는지도 직접 보고 싶어서 " },
           { "type": "text", "marks": [{ "type": "code" }], "text": "CLIENT INFO" },
-          { "type": "text", "text": " 같은 \"긴 텍스트 응답\" 도 RESP3 에서는 " },
-          { "type": "text", "marks": [{ "type": "code" }], "text": "=" },
-          { "type": "text", "text": " (Verbatim string) 으로 와서 \"이건 텍스트다\" 라는 타입 힌트가 같이 붙는다. RESP2 에서는 그냥 " },
-          { "type": "text", "marks": [{ "type": "code" }], "text": "$" },
-          { "type": "text", "text": " 일반 bulk 라서 의미 구분이 없었던 부분." }
+          { "type": "text", "text": " 도 두 번 찍어봤다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [{ "type": "text", "text": "RESP2:" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "CLIENT INFO\n$338\nid=3 addr=172.17.0.1:42432 laddr=172.17.0.2:6379 fd=10 name= age=18 idle=0 flags=N capa= db=0 sub=0 psub=0 ssub=0 multi=-1 watch=0 qbuf=0 qbuf-free=0 argv-mem=10 multi-mem=0 rbs=1024 rbp=26 obl=0 oll=0 omem=0 tot-mem=1690 events=r cmd=client|info user=default redir=-1 resp=2 lib-name= lib-ver= tot-net-in=197 tot-net-out=211 tot-cmds=10\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [{ "type": "text", "text": "RESP3:" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "CLIENT INFO\n=339\ntxt:id=4 addr=172.17.0.1:42358 laddr=172.17.0.2:6379 fd=10 name= age=5 idle=0 flags=N capa= db=0 sub=0 psub=0 ssub=0 multi=-1 watch=0 qbuf=0 qbuf-free=0 argv-mem=10 multi-mem=0 rbs=1024 rbp=52 obl=0 oll=0 omem=0 tot-mem=1690 events=r cmd=client|info user=default redir=-1 resp=3 lib-name= lib-ver= tot-net-in=74 tot-net-out=223 tot-cmds=3\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "RESP2 는 그냥 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$338" },
+          { "type": "text", "text": " 일반 Bulk String 인데, RESP3 에서는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "=339" },
+          { "type": "text", "text": " (Verbatim String) 으로 오고 본문 앞에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "txt:" },
+          { "type": "text", "text": " 라는 3바이트 타입 힌트가 더 붙는다 (그래서 길이도 정확히 3 늘어남: 338 → 339). 클라이언트가 \"이건 사람 읽으라고 만든 텍스트\" 라는걸 별도 메타로 받아갈 수 있게 된 것. 응답 안에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "resp=2" },
+          { "type": "text", "text": " / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "resp=3" },
+          { "type": "text", "text": " 필드까지 같이 박혀있어서 지금 연결이 어느 프로토콜인지도 한눈에 확인됨." }
         ]
       },
       {
