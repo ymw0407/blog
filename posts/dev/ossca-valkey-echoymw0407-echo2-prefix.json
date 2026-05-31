@@ -1,0 +1,265 @@
+{
+  "title": "OSSCA Valkey — echoymw0407 응답에 echo2_ prefix 붙이기 (과제 5)",
+  "datetime": "2026-05-26T22:10:00.000Z",
+  "date": "2026-05-26",
+  "category": "dev",
+  "tags": [],
+  "summary": "",
+  "content": {
+    "type": "doc",
+    "content": [
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "OSSCA Valkey 트랙 과제 5. 지난 과제에서 만든 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echoymw0407" },
+          { "type": "text", "text": " 명령의 응답값 앞에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echo2_" },
+          { "type": "text", "text": " 라는 prefix 를 붙여서 돌려주는 것. 코드 자체는 한 함수만 손보면 끝나지만, 그 안에서 sds 관련 함수 세 개의 용법을 한 번에 익히게 되는 짧고 좋은 과제였다." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "변경 범위는 함수 하나" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "과제 4에서 추가했던 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echoymw0407Command" },
+          { "type": "text", "text": " 는 그냥 인자를 그대로 돌려주는 한 줄짜리였음." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "before — 과제 4 결과물" },
+        "content": [
+          { "type": "text", "text": "void echoymw0407Command(client *c) {\n    addReplyBulk(c, c->argv[1]);\n}\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "이걸 응답 앞에 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "echo2_" },
+          { "type": "text", "text": " 를 붙인 새 문자열을 만들어 돌려주도록 바꿈." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "c", "title": "after — 과제 5 결과물" },
+        "content": [
+          { "type": "text", "text": "void echoymw0407Command(client *c) {\n    sds reply = sdsempty();\n\n    reply = sdscatfmt(reply, \"echo2_%S\", objectGetVal(c->argv[1]));\n\n    addReplyBulkSds(c, reply);\n}\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "diff 로 보면 4줄 추가 1줄 삭제. 다른 파일은 안 건드림 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "src/server.h" },
+          { "type": "text", "text": " 프로토타입이나 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "src/commands.def" },
+          { "type": "text", "text": " 메타데이터는 과제 4에서 이미 등록해뒀으니 그대로 둠)." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "쓴 함수 세 개" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdsempty()" },
+          { "type": "text", "text": " 는 빈 sds 하나 만드는 거. 빈 문자열이지만 헤더에 길이 0 / 용량 0 이 박힌 \"제대로 된\" sds." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt(s, fmt, ...)" },
+          { "type": "text", "text": " 는 기존 sds 뒤에 포맷 결과를 이어 붙임. 여기서 헷갈렸던 게 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%S" },
+          { "type": "text", "text": " (대문자 S). printf 의 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%s" },
+          { "type": "text", "text": " (C string) 가 아니라 sds 전용 placeholder. sds 는 헤더에 길이를 들고 있으니까 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "strlen" },
+          { "type": "text", "text": " 안 돌리고 바로 길이를 가져다 쓸 수 있어서 빠름. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 는 printf 의 모든 포맷을 다 지원하지도 않고 (사실상 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%s, %S, %i, %I, %u, %U, %%" },
+          { "type": "text", "text": " 정도만 있음), 대신 sds 와 잘 노는 가벼운 포맷터라고 보면 됨." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds(c, sds)" },
+          { "type": "text", "text": " 는 만들어둔 sds 를 Bulk String 응답으로 보내주는 헬퍼. 과제 4 에서 쓴 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk(c, robj*)" },
+          { "type": "text", "text": " 와 짝이고, 인자 타입에 따라 함수가 분리되어 있음. C 문자열을 직접 보낼때는 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkCBuffer" },
+          { "type": "text", "text": " / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkCString" },
+          { "type": "text", "text": " 같은 변종도 있음." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "마지막 한 가지. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "c->argv[1]" },
+          { "type": "text", "text": " 은 robj 포인터인데 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 의 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "%S" },
+          { "type": "text", "text": " 는 sds 를 받으니까, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "objectGetVal(c->argv[1])" },
+          { "type": "text", "text": " 로 robj 안에서 sds 를 한 번 꺼내줘야 함. robj 가 INT encoding 일 가능성까지 같이 다루려면 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "getDecodedObject" },
+          { "type": "text", "text": " 를 한 번 거쳐서 문자열로 풀어준 뒤 꺼내는게 더 안전한데, 여기서는 message 인자가 클라이언트가 보낸 RESP Bulk String 이라 처음부터 sds 라서 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "objectGetVal" },
+          { "type": "text", "text": " 만으로 충분." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "빌드 + 동작 확인" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "과제 4와 같은 도커 빌드 (Debian + " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "MALLOC=libc" },
+          { "type": "text", "text": ") 로 다시 빌드. 그리고 raw socket 으로 명령 두 개 비교:" }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ECHO hello\n$5\nhello\n\nECHOYMW0407 hello\n$11\necho2_hello\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "기존 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "ECHO" },
+          { "type": "text", "text": " 는 그대로 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$5\\r\\nhello" },
+          { "type": "text", "text": ", 우리 명령은 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$11\\r\\necho2_hello" },
+          { "type": "text", "text": ". Bulk 길이가 정확히 6 (\"echo2_\") + 5 (\"hello\") = 11 로 떨어지는걸 보면 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " 가 sds 헤더의 길이를 그대로 들고 와서 새 sds 헤더에 다시 박아주고, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": " 가 그 헤더 길이를 그대로 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$N" },
+          { "type": "text", "text": " 으로 옮겨 적었다는걸 알 수 있다. 길이 계산 코드를 한 줄도 안 썼는데 RESP 응답 길이가 정확함." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "공백 들어간 인자도 똑같이 잘 됨." }
+        ]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "ECHOYMW0407 \"world from blog\"\n$21\necho2_world from blog\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "6 + 15 = 21. 검증 끝." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "RESP3 에서도 동일하게 떨어짐" }]
+      },
+      {
+        "type": "codeBlock",
+        "attrs": { "language": "plain", "title": "" },
+        "content": [
+          { "type": "text", "text": "HELLO 3\n%7\n...\nECHOYMW0407 hello\n$11\necho2_hello\n" }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": " 는 RESP 버전이랑 무관하게 그냥 Bulk String 으로 응답을 만드니까 RESP3 에서도 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "$11\\r\\necho2_hello" },
+          { "type": "text", "text": " 그대로 옴. Map/Set/Double 같은 RESP3 신규 타입은 서버가 \"이 응답은 정말로 map/set 의미\" 라고 판단한 명령에서만 쓰이고, 단순 echo 류는 RESP 2/3 출력이 동일." }
+        ]
+      },
+      {
+        "type": "heading",
+        "attrs": { "textAlign": null, "level": 2 },
+        "content": [{ "type": "text", "text": "정리" }]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "변경 자체는 4줄 추가 1줄 삭제로 끝나지만, 이 한 번으로 익히는 게 꽤 많은 과제였다. " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdsempty" },
+          { "type": "text", "text": " 으로 빈 sds 만들기, " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt %S" },
+          { "type": "text", "text": " 가 sds 전용 포맷이라는 거, robj 와 sds 변환은 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "objectGetVal" },
+          { "type": "text", "text": " 한 줄, 그리고 응답 헬퍼가 인자 타입별로 분리되어 있다는 거 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulk" },
+          { "type": "text", "text": " / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": " / " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkCBuffer" },
+          { "type": "text", "text": ")." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "다음에 다른 명령을 손볼 때 응답을 가공해야 하는 상황이 오면 이 패턴 (" },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdsempty" },
+          { "type": "text", "text": " → " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "sdscatfmt" },
+          { "type": "text", "text": " → " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "addReplyBulkSds" },
+          { "type": "text", "text": ") 가 가장 기본 단위로 머리에 박힘. 짧은 과제인데 남는 게 큰 편이었다." }
+        ]
+      },
+      {
+        "type": "paragraph",
+        "attrs": { "textAlign": null },
+        "content": [
+          { "type": "text", "text": "PR 은 과제 4 (명령 추가) 와 분리해서 별도 브랜치 " },
+          { "type": "text", "marks": [{ "type": "code" }], "text": "feature/add-prefix-to-echoymw0407" },
+          { "type": "text", "text": " 로 올림. 리뷰어 입장에서 \"명령 신규 등록\" 과 \"응답 포맷 변경\" 은 관심사가 다르기 때문." }
+        ]
+      }
+    ]
+  }
+}
