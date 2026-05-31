@@ -1,7 +1,7 @@
 {
   "title": "Valkey 에 telnet 으로 붙어서 RESP2 / RESP3 직접 보기",
-  "datetime": "2026-05-31T08:30:00.000Z",
-  "date": "2026-05-31",
+  "datetime": "2026-04-29T08:30:00.000Z",
+  "date": "2026-04-29",
   "category": "dev",
   "tags": [],
   "summary": "",
@@ -99,7 +99,6 @@
         "type": "paragraph",
         "attrs": { "textAlign": null },
         "content": [
-          { "type": "text", "text": "" },
           { "type": "text", "marks": [{ "type": "code" }], "text": "+OK" },
           { "type": "text", "text": " 가 Simple String. " },
           { "type": "text", "marks": [{ "type": "code" }], "text": "$5\\r\\nworld\\r\\n" },
@@ -140,7 +139,6 @@
         "type": "paragraph",
         "attrs": { "textAlign": null },
         "content": [
-          { "type": "text", "text": "" },
           { "type": "text", "marks": [{ "type": "code" }], "text": "*3" },
           { "type": "text", "text": " 가 \"이제부터 원소 3개짜리 배열\" 이라는 헤더. 그 뒤로 원소가 줄줄이 나오는데 각 원소도 자기 타입의 prefix 가 붙는다. 여기선 다 Bulk String 이라 " },
           { "type": "text", "marks": [{ "type": "code" }], "text": "$1\\r\\na\\r\\n" },
@@ -187,7 +185,6 @@
         "type": "paragraph",
         "attrs": { "textAlign": null },
         "content": [
-          { "type": "text", "text": "" },
           { "type": "text", "marks": [{ "type": "code" }], "text": "-" },
           { "type": "text", "text": " 로 시작하고 한 줄짜리 text. 앞 토큰(여기선 " },
           { "type": "text", "marks": [{ "type": "code" }], "text": "ERR" },
